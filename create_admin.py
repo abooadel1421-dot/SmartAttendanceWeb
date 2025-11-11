@@ -3,7 +3,7 @@ from app import create_app, db
 from werkzeug.security import generate_password_hash  
 import os  
 
-app = create_app()  
+app, _ = create_app() # تجاهل كائن الـ socketio لأنه غير مطلوب هنا
 
 with app.app_context():  
     # ----------------------------------------------------
