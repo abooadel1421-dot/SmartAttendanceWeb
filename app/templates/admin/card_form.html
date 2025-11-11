@@ -1,0 +1,151 @@
+{# app/templates/admin/card_form.html #}  
+{% extends "admin/base.html" %}  
+{% import 'bootstrap/wtf.html' as wtf %}  
+
+{% block head_css %}  
+    {{ super() }}  
+    {# ملف CSS الخاص بهذه الصفحة #}  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/card_form.css') }}">  
+    {# Flatpickr CSS for Datepicker #}  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">  
+    {# Flatpickr Arabic locale CSS #}  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.css">  
+    {# Select2 CSS for enhanced dropdowns #}  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />  
+    {# Font Awesome for Icons #}  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+{% endblock %}  
+
+{% block admin_content %}  
+    <div class="container-fluid py-4">  
+        <h1 class="mb-4 text-center display-5 fw-bold text-primary">{{ title }}</h1>  
+
+        {# رسائل الفلاش (Flash Messages) - تم تحديثها لتتوافق مع Bootstrap 5 #}  
+        {% with messages = get_flashed_messages(with_categories=true) %}  
+            {% if messages %}  
+                <div class="flash-messages-container">  
+                    {% for category, message in messages %}  
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">  
+                            {{ message }}  
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+                        </div>  
+                    {% endfor %}  
+                </div>  
+            {% endif %}  
+        {% endwith %}  
+
+        <div class="form-card card shadow-lg mb-4 border-0 rounded-4">  
+            <div class="card-header bg-gradient-primary text-white py-3 rounded-top-4">  
+                <h6 class="m-0 font-weight-bold">{{ title }}</h6>  
+            </div>  
+            <div class="card-body p-4">  
+                <form action="" method="post" class="needs-validation" novalidate>  
+                    {{ form.hidden_tag() }}  
+
+                    <div class="row g-4 mb-4"> {# g-4 for gutter, mb-4 for margin-bottom #}  
+                        <div class="col-md-6">  
+                            <div class="form-group">  
+                                {{ form.card_uid.label(class="form-label") }}  
+                                {# تم تعديل الـ ID ليتوافق مع card_form.js #}  
+                                <div id="cardUidGroup" class="input-group card-uid-scan-group">  
+                                    {{ form.card_uid(class="form-control form-control-lg", id="card_uid", placeholder="أدخل رقم UID للبطاقة يدوياً أو قم بمسحها") }}  
+                                    {# تم تعديل الـ ID ليتوافق مع card_form.js #}  
+                                    <button class="btn btn-success" type="button" id="scanCardBtn" title="قراءة بطاقة جديدة">  
+                                        <span class="spinner-border spinner-border-sm d-none scan-spinner" role="status" aria-hidden="true" id="scanSpinner"></span>  
+                                        <i class="fas fa-credit-card me-2"></i>  
+                                        مسح البطاقة  
+                                    </button>  
+                                    {# تم إضافة زر الإلغاء هنا ليتوافق مع منطق JS #}  
+                                    <button class="btn btn-danger d-none" type="button" id="cancelScanBtn" title="إلغاء عملية المسح">  
+                                        <i class="fas fa-times-circle me-2"></i>  
+                                        إلغاء  
+                                    </button>  
+                                </div>  
+                                {% if form.card_uid.errors %}  
+                                    <div class="invalid-feedback d-block">  
+                                        {% for error in form.card_uid.errors %}{{ error }}{% endfor %}  
+                                    </div>  
+                                {% endif %}  
+                                {# رسائل الحالة ستظهر هنا #}  
+                                <div id="scanStatusMessage" class="mt-2"></div>  
+                            </div>  
+                        </div>  
+                        <div class="col-md-6">  
+                            <div class="form-group">  
+                                {# إضافة كلاس datepicker لتهيئة Flatpickr #}  
+                                {{ wtf.form_field(form.issued_at, class="form-control form-control-lg datepicker", placeholder="اختر تاريخ الإصدار") }}  
+                            </div>  
+                        </div>  
+                    </div>  
+
+                    <div class="row g-4 mb-4">  
+                        <div class="col-md-6">  
+                            <div class="form-group">  
+                                {{ wtf.form_field(form.status, class="form-select form-select-lg") }}  
+                            </div>  
+                        </div>  
+                        <div class="col-md-6">  
+                            <div class="form-group">  
+                                {# حقل اختيار الطالب - سيتم تحسينه بواسطة Select2 #}  
+                                {{ wtf.form_field(form.student, class="form-select form-select-lg select2-student") }}  
+                            </div>  
+                        </div>  
+                    </div>  
+
+                    <div class="form-group text-center mt-5">  
+                        <button type="submit" class="btn custom-submit-btn me-3">  
+                            <i class="fas fa-save me-2"></i> {{ form.submit.label }}  
+                        </button>  
+                        <a href="{{ url_for('admin.manage_cards') }}" class="btn custom-cancel-btn">  
+                            <i class="fas fa-times-circle me-2"></i> إلغاء  
+                        </a>  
+                    </div>  
+                </form>  
+            </div>  
+        </div>  
+    </div>  
+{% endblock %}  
+
+{% block body_js %}  
+    {{ super() }} {# للحفاظ على أي سكربتات قد تكون في base.html #}  
+    {# jQuery (يجب أن يكون الأول هنا) #}  
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>  
+
+    {# Select2 JS (يعتمد على jQuery) #}  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ar.js"></script> {# Select2 Arabic locale #}  
+
+    {# Flatpickr JS #}  
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>  
+    {# Flatpickr Arabic locale JS #}  
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>  
+
+    {# ملف JS الخاص بهذه الصفحة (يعتمد على jQuery و Flatpickr) #}  
+    <script src="{{ url_for('static', filename='js/card_form.js') }}"></script>  
+{% endblock %}  
+
+{% block scripts %}  
+    {{ super() }} {# للحفاظ على أي سكربتات قد تكون في base.html #}  
+    <script>  
+        // تهيئة Select2 لحقل الطالب  
+        $(document).ready(function() {  
+            $('.select2-student').select2({  
+                theme: 'bootstrap-5', // استخدام ثيم Bootstrap 5  
+                placeholder: 'ابحث عن طالب لربط البطاقة به',  
+                allowClear: true, // السماح بإلغاء الاختيار  
+                dir: 'rtl', // تحديد اتجاه النص من اليمين لليسار  
+                language: 'ar', // تحديد لغة Select2 للعربية  
+            });  
+
+            // تهيئة Flatpickr لتاريخ الإصدار - تم نقلها إلى هنا لضمان تحميل Flatpickr  
+            flatpickr(".datepicker", {  
+                dateFormat: "Y-m-d",  
+                locale: "ar", // استخدام اللغة العربية  
+                altInput: true,  
+                altFormat: "F j, Y", // تنسيق عرض التاريخ للمستخدم  
+                // يمكنك إضافة خيارات أخرى هنا مثل minDate, maxDate  
+            });  
+        });  
+    </script>  
+{% endblock %}

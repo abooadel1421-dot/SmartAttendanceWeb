@@ -1,0 +1,207 @@
+{# app/templates/admin/dashboard.html #}  
+{% extends "admin/base.html" %}
+
+{% block content %} {# تم تغيير admin_content إلى content ليتطابق مع base_admin.html #}  
+    <div class="container-fluid">  
+        <h1 class="mb-4">لوحة تحكم المسؤول</h1>  
+
+        <div class="row">  
+            {# بطاقة إحصائيات المستخدمين #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-primary h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">  
+                                    المستخدمون الكليون  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_users }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-people-fill fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                    <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.manage_users') }}" class="text-primary small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+
+            {# بطاقة إحصائيات الطلاب #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-success h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">  
+                                    الطلاب الكليون  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_students }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-mortarboard-fill fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                    <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.manage_students') }}" class="text-success small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+
+            {# بطاقة إحصائيات البطاقات النشطة #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-info h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">  
+                                    البطاقات النشطة  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_cards }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-credit-card-fill fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                     <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.manage_cards') }}" class="text-info small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+        <div class="row">  
+            {# بطاقة إحصائيات الأجهزة #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-warning h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">  
+                                    أجهزة القراءة  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_devices }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-hdd-fill fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                     <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.manage_devices') }}" class="text-warning small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+
+            {# بطاقة إحصائيات الحضور لليوم #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-danger h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">  
+                                    سجلات الحضور اليوم  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ attendance_today }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-journal-check fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                     <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.view_attendance_logs') }}" class="text-danger small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+
+            {# بطاقة إضافية (مثلاً: المسؤولون الكليون) #}  
+            <div class="col-md-4 mb-4">  
+                <div class="card shadow-sm border-left-secondary h-100 py-2">  
+                    <div class="card-body">  
+                        <div class="row no-gutters align-items-center">  
+                            <div class="col mr-2">  
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">  
+                                    المسؤولون الكليون  
+                                </div>  
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_admins }}</div>  
+                            </div>  
+                            <div class="col-auto">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-person-badge-fill fa-2x text-gray-300"></i>   
+                            </div>  
+                        </div>  
+                    </div>  
+                    <div class="card-footer text-right">  
+                        <a href="{{ url_for('admin.manage_users', role='admin') }}" class="text-secondary small">عرض التفاصيل <i class="bi bi-arrow-right-circle-fill"></i></a>  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+        {# هنا يمكنك إضافة رسوم بيانية أو جداول ملخص #}  
+        <div class="row">  
+            <div class="col-lg-6 mb-4">  
+                <div class="card shadow-sm mb-4">  
+                    <div class="card-header py-3">  
+                        <h6 class="m-0 font-weight-bold text-primary">الطلاب الجدد (آخر 7 أيام)</h6>  
+                    </div>  
+                    <div class="card-body">  
+                        {# هنا يمكن عرض جدول أو رسم بياني للطلاب الجدد #}  
+                        <p>قائمة بالطلاب الذين تم تسجيلهم حديثًا.</p>  
+                        {# مثال: قائمة بسيطة #}  
+                        {% if recent_students %}  
+                        <ul class="list-group">  
+                            {% for student in recent_students %}  
+                            <li class="list-group-item d-flex justify-content-between align-items-center">  
+                                {{ student.name }} ({{ student.student_id }})  
+                                {# استخدام strftime لتنسيق التاريخ #}  
+                                <span class="badge bg-primary rounded-pill">{{ student.enrollment_date.strftime('%Y-%m-%d') }}</span>  
+                            </li>  
+                            {% endfor %}  
+                        </ul>  
+                        {% else %}  
+                        <p>لا يوجد طلاب جدد في الأيام السبعة الماضية.</p>  
+                        {% endif %}  
+                    </div>  
+                </div>  
+            </div>  
+
+            <div class="col-lg-6 mb-4">  
+                <div class="card shadow-sm mb-4">  
+                    <div class="card-header py-3">  
+                        <h6 class="m-0 font-weight-bold text-primary">أحدث سجلات الحضور</h6>  
+                    </div>  
+                    <div class="card-body">  
+                        {# هنا يمكن عرض أحدث سجلات الحضور #}  
+                        <p>آخر 5 سجلات حضور تم تسجيلها.</p>  
+                        {% if latest_attendance_logs %}  
+                        <ul class="list-group">  
+                            {% for log in latest_attendance_logs %}  
+                            <li class="list-group-item">  
+                                {# تم استبدال أيقونة Font Awesome بأيقونة Bootstrap Icon #}  
+                                <i class="bi bi-clock"></i>   
+                                {# استخدام strftime لتنسيق التاريخ والوقت #}  
+                                {{ log.timestamp.strftime('%Y-%m-%d %I:%M:%S %p') }} -  
+                                <strong>{{ log.student.name if log.student else 'طالب غير معروف' }}</strong> ({{ log.device.name if log.device else 'جهاز غير معروف' }})  
+                            </li>  
+                            {% endfor %}  
+                        </ul>  
+                        {% else %}  
+                        <p>لا توجد سجلات حضور حديثة.</p>  
+                        {% endif %}  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+    </div>  
+{% endblock %}

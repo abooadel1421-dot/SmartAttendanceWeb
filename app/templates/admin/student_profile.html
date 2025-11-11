@@ -1,0 +1,85 @@
+{# app/templates/admin/student_profile.html #}  
+{% extends "admin/base.html" %}  
+
+{% block admin_content %}  
+    <div class="page-header">  
+        <h1 class="page-title">الملف الشخصي للطالب: {{ student.first_name }} {{ student.last_name }}</h1> {# تم التعديل هنا #}  
+        <div class="page-options d-flex">  
+            <a href="{{ url_for('admin.edit_student', id=student.id) }}" class="btn btn-warning ms-2">  
+                <i class="bi bi-pencil-square"></i> تعديل الطالب  
+            </a>  
+            <a href="{{ url_for('admin.students_list') }}" class="btn btn-secondary ms-2">  
+                <i class="bi bi-arrow-left"></i> العودة لقائمة الطلاب  
+            </a>  
+        </div>  
+    </div>  
+
+    <div class="card stats-card mb-4">  
+        <div class="card-header bg-primary text-white py-3">  
+            <h6 class="m-0 fw-bold">معلومات الطالب الأساسية</h6>  
+        </div>  
+        <div class="card-body">  
+            <div class="row">  
+                <div class="col-md-6 mb-3">  
+                    <strong>الاسم الكامل:</strong> {{ student.first_name }} {{ student.last_name }} {# تم التعديل هنا #}  
+                </div>  
+                <div class="col-md-6 mb-3">  
+                    <strong>الرقم الأكاديمي:</strong> {{ student.student_id_number }} {# تم التعديل هنا #}  
+                </div>  
+            </div>  
+            <div class="row">  
+                <div class="col-md-6 mb-3">  
+                    <strong>التخصص:</strong> {{ student.major }}  
+                </div>  
+                <div class="col-md-6 mb-3">  
+                    <strong>المستوى/الصف:</strong> {{ student.grade }} {# تم التعديل هنا #}  
+                </div>  
+            </div>  
+            <div class="row">  
+                <div class="col-md-6 mb-3">  
+                    <strong>حالة الطالب:</strong>  
+                    {% if student.is_active %} {# تم التعديل هنا #}  
+                        <span class="badge bg-success">نشط</span>  
+                    {% else %}  
+                        <span class="badge bg-warning">غير نشط</span>  
+                    {% endif %}  
+                </div>  
+                <div class="col-md-6 mb-3">  
+                    <strong>تاريخ الميلاد:</strong> {# تم التعديل هنا (من تاريخ التسجيل إلى تاريخ الميلاد) #}  
+                    {% if student.date_of_birth %} {# تم التعديل هنا #}  
+                        {{ student.date_of_birth.strftime('%Y-%m-%d') }}  
+                    {% else %}  
+                        غير متوفر  
+                    {% endif %}  
+                </div>  
+            </div>  
+            {# يمكنك إضافة المزيد من التفاصيل هنا مثل: #}  
+            <div class="row">  
+                <div class="col-md-6 mb-3">  
+                    <strong>بريد ولي الأمر:</strong> {{ student.parent_email if student.parent_email }}  
+                </div>  
+                <div class="col-md-6 mb-3">  
+                    <strong>هاتف ولي الأمر:</strong> {{ student.parent_phone_number if student.parent_phone_number }}  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+
+    {# يمكنك إضافة أقسام أخرى هنا مثل: سجلات الحضور، الدورات، الدرجات، إلخ. #}  
+    <div class="card stats-card mt-4">  
+        <div class="card-header bg-info text-white py-3">  
+            <h6 class="m-0 fw-bold">روابط سريعة</h6>  
+        </div>  
+        <div class="card-body">  
+            <a href="{{ url_for('admin.student_attendance_report', student_id=student.id) }}" class="btn btn-primary me-2"> {# تم التعديل هنا (من student_id إلى id) #}  
+                <i class="bi bi-file-earmark-text"></i> عرض تقرير الحضور  
+            </a>  
+            {#  
+            <a href="{{ url_for('admin.student_courses', id=student.id) }}" class="btn btn-secondary me-2">  
+                <i class="bi bi-book"></i> الدورات المسجل بها  
+            </a>  
+            #}  
+        </div>  
+    </div>  
+
+{% endblock admin_content %}

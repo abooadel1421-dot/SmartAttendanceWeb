@@ -1,0 +1,144 @@
+{# app/templates/student/my_attendance.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_content %}
+    {{ super() }}
+    <style>
+        .report-table td select {
+            width: 150px; /* لضبط عرض قائمة الحالة */
+        }
+        .card-header i {
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+        .badge {
+            padding: 0.5em 0.75em;
+            font-size: 0.85em;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">سجل الحضور والغياب الخاص بي</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-clipboard-list me-2"></i>تفاصيل الحضور والغياب
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                هنا تجد سجلات حضورك وغيابك التي تم تعميمها من قبل المعلم. يمكنك تقديم عذر للأيام التي تظهر فيها "غائب".
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover report-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الموقع</th> {# 🟢 إضافة عمود الموقع #}
+                            <th>وقت الدخول الفعلي</th>
+                            <th>الحالة النهائية</th>
+                            <th>حالة العذر</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if attendance_records %}
+                            {% for record_entry in attendance_records %}
+                                {% set log = record_entry.log %}
+                                {% set excuse = record_entry.excuse %}
+                                {# 🟢 المتغير الجديد الذي نحتاجه لوقت الدخول الفعلي #}
+                                {% set actual_entry_time = record_entry.actual_entry_time %} 
+                                <tr>
+                                    <td>{{ log.timestamp.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {# 🟢 عرض الموقع #}
+                                        {% if log.device %}
+                                            {{ log.device.location }}
+                                        {% else %}
+                                            غير معروف
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {# 🟢 هنا التعديل لعرض وقت الدخول الفعلي من record_entry #}
+                                        {% if actual_entry_time %}
+                                            {{ actual_entry_time.strftime('%I:%M %p') }} {# تنسيق الوقت (مثلاً 09:30 AM) #}
+                                        {% else %}
+                                            -- {# إذا لم يتم تسجيل وقت دخول فعلي لهذا اليوم #}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if log.final_status == FinalAttendanceStatus.PRESENT %}
+                                            <span class="badge bg-success">{{ log.final_status.value }}</span>
+                                        {% elif log.final_status == FinalAttendanceStatus.LATE %}
+                                            <span class="badge bg-warning text-dark">{{ log.final_status.value }}</span>
+                                        {% elif log.final_status == FinalAttendanceStatus.ABSENT %}
+                                            <span class="badge bg-danger">{{ log.final_status.value }}</span>
+                                        {% elif log.final_status == FinalAttendanceStatus.EXCUSED %}
+                                            <span class="badge bg-info">{{ log.final_status.value }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">غير معروف</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if excuse %}
+                                            {% if excuse.status == ExcuseStatus.APPROVED %}
+                                                <span class="badge bg-success">عذر مقبول</span>
+                                            {% elif excuse.status == ExcuseStatus.PENDING %}
+                                                <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                                            {% elif excuse.status == ExcuseStatus.REJECTED %}
+                                                <span class="badge bg-danger">عذر مرفوض</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">غير محدد</span>
+                                            {% endif %}
+                                            <small class="text-muted d-block">السبب: {{ excuse.reason|truncate(50) }}</small>
+                                        {% else %}
+                                            <span class="badge bg-secondary">لا يوجد عذر</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if log.final_status == FinalAttendanceStatus.ABSENT and (not excuse or excuse.status == ExcuseStatus.REJECTED) %}
+                                            <a href="{{ url_for('student.submit_excuse', date=log.timestamp.strftime('%Y-%m-%d')) }}" class="btn btn-sm btn-primary">تقديم عذر</a>
+                                        {% elif excuse %}
+                                            <button class="btn btn-sm btn-secondary" disabled>تم تقديم عذر</button>
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">لا توجد سجلات حضور أو غياب متاحة حاليًا.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if absent_dates_for_excuse %}
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-info text-white">
+                <i class="fas fa-calendar-times me-2"></i>أيام الغياب التي يمكن تقديم عذر عنها
+            </div>
+            <div class="card-body">
+                <p>الأيام التالية تم تسجيلك فيها غائباً ولم يتم تقديم عذر معتمد عنها بعد:</p>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for absent_date in absent_dates_for_excuse %}
+                        <a href="{{ url_for('student.submit_excuse', date=absent_date.strftime('%Y-%m-%d')) }}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-plus-circle me-1"></i>تقديم عذر لـ {{ absent_date.strftime('%Y-%m-%d') }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

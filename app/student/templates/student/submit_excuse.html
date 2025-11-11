@@ -1,0 +1,53 @@
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_content %}
+    {{ super() }}
+    <style>
+        .card-header i {
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">تقديم عذر جديد</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+            <i class="fas fa-file-alt me-2"></i>معلومات العذر
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('student.submit_excuse') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.date_of_absence.label(class="form-label") }}
+                    {{ form.date_of_absence(class="form-control") }}
+                    {% for error in form.date_of_absence.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.reason.label(class="form-label") }}
+                    {{ form.reason(class="form-control", rows="5") }}
+                    {% for error in form.reason.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

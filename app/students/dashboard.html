@@ -1,0 +1,11 @@
+{# app/student/templates/student/dashboard.html #}  
+{% extends "public_base.html" %} {# أو base.html إذا كنت تريده بنفس شريط الإدارة الجانبي #}  
+
+{% block content %}  
+    <div class="p-5 mb-4 bg-light rounded-3">  
+        <h1 class="display-5 fw-bold">لوحة تحكم الطالب</h1>  
+        <p class="fs-4">مرحباً بك، <span class="text-primary">{{ current_user.username }}</span> في لوحة تحكم الطلاب.</p>  
+        <hr>  
+        <p>هنا ستجد معلوماتك الشخصية، جدولك الدراسي، وسجل حضورك.</p>  
+    </div>  
+{% endblock %}

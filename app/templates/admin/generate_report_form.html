@@ -1,0 +1,73 @@
+{# app/templates/admin/generate_report_form.html #}
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+    <div class="container-fluid py-4">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-file-alt me-3"></i>
+            توليد تقرير الحضور المخصص
+        </h1>
+
+        {# رسائل الفلاش #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-sliders-h me-2"></i>
+                    تحديد معايير التقرير
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.generate_attendance_report') }}">
+                    <div class="mb-3">
+                        <label for="report_date" class="form-label">التاريخ:</label>
+                        <input type="date" class="form-control" id="report_date" name="report_date" value="{{ today_date if today_date else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="start_time" class="form-label">وقت البدء:</label>
+                        <input type="time" class="form-control" id="start_time" name="start_time" value="09:00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_time" class="form-label">وقت الانتهاء:</label>
+                        <input type="time" class="form-control" id="end_time" name="end_time" value="10:00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">الموقع (موقع الجهاز):</label>
+                        <select class="form-select" id="location" name="location" required>
+                            <option value="">اختر موقعًا...</option>
+                            {% for loc in locations %}
+                                <option value="{{ loc }}">{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>
+                        عرض التقرير
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تعيين التاريخ الحالي كقيمة افتراضية لـ input type="date"
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById('report_date').value = today;
+        });
+    </script>
+{% endblock %}

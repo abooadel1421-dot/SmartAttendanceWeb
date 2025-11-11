@@ -1,0 +1,134 @@
+{# app/templates/admin/base_admin.html #}  
+{% extends 'base.html' %} {# يرث من القالب الأساسي لتطبيقك #}  
+
+{% block head %}  
+    {{ super() }}  
+    {# هنا يمكنك إضافة أي ملفات CSS أو JavaScript خاصة بصفحات الإدارة #}  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">  
+{% endblock %}  
+
+{% block app_content %}  
+    <div class="admin-wrapper">  
+        {# شريط التنقل الجانبي (Sidebar) #}  
+        <nav id="sidebar" class="bg-dark text-white sidebar-nav">  
+            <div class="sidebar-header text-center py-3">  
+                <h3>لوحة تحكم المسؤول</h3>  
+            </div>  
+            <ul class="list-unstyled components">  
+                <li {% if active_page == 'admin_dashboard' %}class="active"{% endif %}>  
+                    <a href="{{ url_for('admin.index') }}">  
+                        <i class="fas fa-tachometer-alt"></i> لوحة التحكم  
+                    </a>  
+                </li>  
+                <li>  
+                    <a href="#usersSubmenu" data-toggle="collapse" aria-expanded="{% if active_menu == 'users' %}true{% else %}false{% endif %}" class="dropdown-toggle">  
+                        <i class="fas fa-users"></i> إدارة المستخدمين  
+                    </a>  
+                    <ul class="collapse list-unstyled {% if active_menu == 'users' %}show{% endif %}" id="usersSubmenu">  
+                        <li {% if active_page == 'manage_users' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.manage_users') }}">عرض المستخدمين</a>  
+                        </li>  
+                        <li {% if active_page == 'add_user' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.add_user') }}">إضافة مستخدم</a>  
+                        </li>  
+                    </ul>  
+                </li>  
+                 <li>  
+                    <a href="#studentsSubmenu" data-toggle="collapse" aria-expanded="{% if active_menu == 'students' %}true{% else %}false{% endif %}" class="dropdown-toggle">  
+                        <i class="fas fa-user-graduate"></i> إدارة الطلاب  
+                    </a>  
+                    <ul class="collapse list-unstyled {% if active_menu == 'students' %}show{% endif %}" id="studentsSubmenu">  
+                        <li {% if active_page == 'manage_students' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.manage_students') }}">عرض الطلاب</a>  
+                        </li>  
+                        <li {% if active_page == 'add_student' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.add_student') }}">إضافة طالب</a>  
+                        </li>  
+                    </ul>  
+                </li>  
+                <li>  
+                    <a href="#cardsSubmenu" data-toggle="collapse" aria-expanded="{% if active_menu == 'cards' %}true{% else %}false{% endif %}" class="dropdown-toggle">  
+                        <i class="fas fa-id-card"></i> إدارة البطاقات  
+                    </a>  
+                    <ul class="collapse list-unstyled {% if active_menu == 'cards' %}show{% endif %}" id="cardsSubmenu">  
+                        <li {% if active_page == 'manage_cards' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.manage_cards') }}">عرض البطاقات</a>  
+                        </li>  
+                        <li {% if active_page == 'add_card' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.add_card') }}">إصدار بطاقة جديدة</a>  
+                        </li>  
+                    </ul>  
+                </li>  
+                <li>  
+                    <a href="#devicesSubmenu" data-toggle="collapse" aria-expanded="{% if active_menu == 'devices' %}true{% else %}false{% endif %}" class="dropdown-toggle">  
+                        <i class="fas fa-hdd"></i> إدارة الأجهزة  
+                    </a>  
+                    <ul class="collapse list-unstyled {% if active_menu == 'devices' %}show{% endif %}" id="devicesSubmenu">  
+                        <li {% if active_page == 'manage_devices' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.manage_devices') }}">عرض الأجهزة</a>  
+                        </li>  
+                        <li {% if active_page == 'add_device' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.add_device') }}">إضافة جهاز</a>  
+                        </li>  
+                    </ul>  
+                </li>  
+                <li {% if active_page == 'view_attendance_logs' %}class="active"{% endif %}>  
+                    <a href="{{ url_for('admin.view_attendance_logs') }}">  
+                        <i class="fas fa-clipboard-list"></i> سجلات الحضور  
+                    </a>  
+                </li>  
+                <li>  
+                    <a href="#reportsSubmenu" data-toggle="collapse" aria-expanded="{% if active_menu == 'reports' %}true{% else %}false{% endif %}" class="dropdown-toggle">  
+                        <i class="fas fa-chart-pie"></i> التقارير  
+                    </a>  
+                    <ul class="collapse list-unstyled {% if active_menu == 'reports' %}show{% endif %}" id="reportsSubmenu">  
+                        <li {% if active_page == 'reports_dashboard' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.reports_dashboard') }}">لوحة تحكم التقارير</a>  
+                        </li>  
+                        <li {% if active_page == 'student_attendance_report' %}class="active"{% endif %}>  
+                            <a href="{{ url_for('admin.student_attendance_report') }}">تقرير حضور الطلاب</a>  
+                        </li>  
+                        {# يمكن إضافة المزيد من التقارير هنا #}  
+                    </ul>  
+                </li>  
+                <li {% if active_page == 'system_settings' %}class="active"{% endif %}>  
+                    <a href="{{ url_for('admin.system_settings') }}">  
+                        <i class="fas fa-cogs"></i> إعدادات النظام  
+                    </a>  
+                </li>  
+                {# رابط تسجيل الخروج #}  
+                <li>  
+                    <a href="{{ url_for('auth_bp.logout') }}">  
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج  
+                    </a>  
+                </li>  
+            </ul>  
+        </nav>  
+
+        {# المحتوى الرئيسي #}  
+        <div id="content" class="p-4">  
+            {# زر لتبديل الشريط الجانبي في الشاشات الصغيرة #}  
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 d-block d-md-none">  
+                <button type="button" id="sidebarCollapse" class="btn btn-info">  
+                    <i class="fas fa-align-left"></i> <span>تبديل القائمة</span>  
+                </button>  
+            </nav>  
+
+            {# محتوى الصفحة الفعلي سيتم إدخاله هنا #}  
+            {% block admin_content %}{% endblock %}  
+        </div>  
+    </div>  
+{% endblock %}  
+
+{% block scripts %}  
+    {{ super() }}  
+    {# هنا يمكنك إضافة أي ملفات JavaScript خاصة بصفحات الإدارة #}  
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>  
+    <script type="text/javascript">  
+        $(document).ready(function () {  
+            $('#sidebarCollapse').on('click', function () {  
+                $('#sidebar').toggleClass('active');  
+            });  
+        });  
+    </script>  
+{% endblock %}

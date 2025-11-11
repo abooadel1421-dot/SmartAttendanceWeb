@@ -1,0 +1,72 @@
+{# app/templates/index.html #}  
+{% extends "public_base.html" %}  
+
+{% block content %}  
+    <div class="p-5 mb-4 bg-light rounded-3 text-center">  
+        <div class="container-fluid py-5">  
+            <h1 class="display-5 fw-bold">نظام ذكي لإدارة وتنظيم دخول وخروج الطالبات</h1>  
+            <p class="col-md-8 fs-4 mx-auto">باستخدام البطاقات الذكية NFC</p>  
+            <p class="lead">  
+                يهدف هذا النظام إلى تحسين كفاءة وأمن عمليات الدخول والخروج في الجامعات،  
+                وتقليل الازدحام، وتوفير بيانات دقيقة لدعم اتخاذ القرارات الإدارية، وتعزيز البيئة التعليمية الآمنة والمنظمة.  
+            </p>  
+            <hr class="my-4">  
+
+            {% if not current_user.is_authenticated %}  
+                <p class="mb-4">  
+                    للوصول إلى النظام، يرجى اختيار نوع المستخدم وتسجيل الدخول:  
+                </p>  
+                <div class="d-grid gap-3 col-md-6 mx-auto">  
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('auth_bp.login', role='admin') }}" role="button">  
+                        <i class="bi bi-person-fill-gear me-2"></i>تسجيل دخول كـ "مدير"  
+                    </a>  
+                    <a class="btn btn-success btn-lg" href="{{ url_for('auth_bp.login', role='teacher') }}" role="button">  
+                        <i class="bi bi-person-workspace me-2"></i>تسجيل دخول كـ "معلم"  
+                    </a>  
+                    <a class="btn btn-info btn-lg text-white" href="{{ url_for('auth_bp.login', role='student') }}" role="button">  
+                        <i class="bi bi-person-fill me-2"></i>تسجيل دخول كـ "طالب"  
+                    </a>  
+                </div>  
+
+            {% else %}  
+                <p class="mb-4">مرحباً بك يا {{ current_user.username }}!</p>  
+                <a class="btn btn-primary btn-lg"  
+                   href="{% if current_user.role == UserRole.ADMIN %}{{ url_for('admin.index') }}  
+                         {% elif current_user.role == UserRole.TEACHER %}{{ url_for('teacher.dashboard') }} {# <--- هنا التعديل #}  
+                         {% else %}{{ url_for('main.dashboard') }}{% endif %}" {# <--- تأكد أن هذا هو الافتراضي #}  
+                   role="button">  
+                    <i class="bi bi-speedometer2 me-2"></i>اذهب إلى لوحة التحكم الخاصة بك  
+                </a>  
+            {% endif %}  
+        </div>  
+    </div>  
+
+    <!-- بقية المحتوى الخاص بالمميزات -->  
+    <div class="row text-center">  
+        <div class="col-md-4">  
+            <div class="card mb-4 shadow-sm">  
+                <div class="card-body">  
+                    <h5 class="card-title">تقليل الازدحام</h5>  
+                    <p class="card-text">تبسيط وتسريع عملية الدخول والخروج لتقليل التكدس عند البوابات.</p>  
+                </div>  
+            </div>  
+        </div>  
+        <div class="col-md-4">  
+            <div class="card mb-4 shadow-sm">  
+                <div class="card-body">  
+                    <h5 class="card-title">تعزيز الأمن</h5>  
+                    <p class="card-text">التحقق من هوية الطالبات ومنع دخول غير المصرح لهم.</p>  
+                </div>  
+            </div>  
+        </div>  
+        <div class="col-md-4">  
+            <div class="card mb-4 shadow-sm">  
+                <div class="card-body">  
+                    <h5 class="card-title">بيانات دقيقة</h5>  
+                    <p class="card-text">توفير سجلات حضور وانصراف دقيقة لدعم الإدارة.</p>  
+                </div>  
+            </div>  
+              
+        </div>  
+    </div>  
+{% endblock %}

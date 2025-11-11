@@ -1,0 +1,39 @@
+{# app/templates/teacher/send_notification.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="display-5 fw-bold mb-4">
+        <i class="fas fa-paper-plane me-3"></i>
+        {{ title }}
+    </h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h6 class="m-0"><i class="fas fa-envelope me-2"></i>إرسال إشعار جديد</h6>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.student_id.label(class="form-label") }}
+                    {{ form.student_id(class="form-select") }}
+                    {% for error in form.student_id.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    {{ form.message.label(class="form-label") }}
+                    {{ form.message(class="form-control", rows=5) }}
+                    {% for error in form.message.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

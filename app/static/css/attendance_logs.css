@@ -1,0 +1,844 @@
+/* static/css/attendance_logs.css */
+
+/* ========================================= */
+/* متغيرات CSS مخصصة (Custom CSS Variables) */
+/* ========================================= */
+:root {
+    --primary-blue: #007bff;
+    --primary-dark-blue: #0056b3;
+    --accent-green: #28a745;
+    --accent-red: #dc3545;
+    --accent-yellow: #ffc107;
+    --accent-info: #17a2b8;
+    --text-dark: #343a40;
+    --text-light: #f8f9fa;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-light: #e9ecef;
+    --shadow-sm: rgba(0, 0, 0, 0.05);
+    --shadow-md: rgba(0, 0, 0, 0.1);
+    --shadow-lg: rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.3s ease-in-out;
+    --border-radius-sm: 0.5rem;
+    --border-radius-md: 0.75rem;
+    --border-radius-lg: 1rem;
+}
+
+/* ============================ */
+/* تحسينات عامة الصفحة */
+/* ============================ */
+.container-fluid.py-4 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+}
+
+.display-4.fw-bold {
+    font-size: 2.8rem;
+    color: var(--primary-blue);
+    margin-bottom: 2.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.display-4.fw-bold i {
+    font-size: 2.5rem;
+}
+
+/* ============================ */
+/* رسائل الفلاش (Flash Messages) */
+/* ============================ */
+.flash-messages-container {
+    margin-bottom: 2rem;
+    max-width: 100%;
+}
+
+.alert {
+    border-radius: var(--border-radius-md);
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 15px var(--shadow-sm);
+    border: none;
+    transition: all var(--transition-speed);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.alert .d-flex {
+    gap: 10px;
+}
+
+.alert i {
+    min-width: 20px;
+    font-size: 1.2rem;
+}
+
+.alert .btn-close {
+    opacity: 0.7;
+    transition: opacity var(--transition-speed);
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+/* ============================ */
+/* بطاقات الإحصائيات (Stats Cards) */
+/* ============================ */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px var(--shadow-lg);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-right: 5px solid var(--primary-blue);
+    transition: all var(--transition-speed);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px var(--shadow-lg);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.8rem;
+    color: var(--text-light);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.stat-icon.denied {
+    background: linear-gradient(135deg, var(--accent-red) 0%, #b02a37 100%);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.stat-icon.info {
+    background: linear-gradient(135deg, var(--accent-info) 0%, #117a8b 100%);
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0.5rem 0;
+}
+
+.stat-card.denied .stat-value {
+    color: var(--accent-red);
+}
+
+.stat-card.info .stat-value {
+    color: var(--accent-info);
+}
+
+.stat-label {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* ============================ */
+/* بطاقة التصفية والبحث */
+/* ============================ */
+.filter-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px var(--shadow-lg);
+    overflow: hidden;
+    transition: all var(--transition-speed);
+}
+
+.filter-card:hover {
+    box-shadow: 0 20px 50px var(--shadow-lg);
+}
+
+.filter-header {
+    background: linear-gradient(to right, var(--primary-blue), var(--primary-dark-blue));
+    color: var(--text-light);
+    padding: 1.5rem 2rem;
+    border-bottom: none;
+}
+
+.filter-header h5 {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-content {
+    padding: 2rem;
+}
+
+.form-label {
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-light);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all var(--transition-speed);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group-text {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    color: var(--primary-blue);
+}
+
+.input-group .form-control:focus + .input-group-text,
+.input-group .input-group-text + .form-control:focus {
+    border-color: var(--primary-blue);
+}
+
+/* ============================ */
+/* الأزرار */
+/* ============================ */
+.btn {
+    border-radius: var(--border-radius-md);
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: all var(--transition-speed);
+    border: none;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+    box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: var(--text-light);
+}
+
+.btn-outline-info {
+    border: 2px solid var(--accent-info);
+    color: var(--accent-info);
+}
+
+.btn-outline-info:hover {
+    background-color: var(--accent-info);
+    color: var(--text-light);
+}
+
+.btn i {
+    margin-left: 0.5rem;
+}
+
+/* ============================ */
+/* بطاقة الجدول (Card) */
+/* ============================ */
+.card {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px var(--shadow-lg);
+    overflow: hidden;
+    transition: all var(--transition-speed);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px var(--shadow-lg);
+}
+
+.card-header {
+    background: linear-gradient(to right, var(--primary-blue), var(--primary-dark-blue));
+    color: var(--text-light);
+    padding: 1.5rem 2rem;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.08);
+    transform: rotate(30deg);
+    z-index: 0;
+}
+
+.card-header h6 {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.card-header .d-flex {
+    position: relative;
+    z-index: 1;
+}
+
+#recordCount {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.card-body {
+    padding: 2rem;
+    background-color: var(--bg-white);
+}
+
+/* ============================ */
+/* الجدول (Table) */
+/* ============================ */
+.table-responsive {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: #e9edf2;
+    color: var(--text-dark);
+    font-weight: 700;
+    border-bottom: 2px solid var(--border-light);
+    padding: 1.2rem 1rem;
+    vertical-align: middle;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+.table thead th.text-center {
+    text-align: center;
+}
+
+.table tbody tr {
+    transition: all var(--transition-speed);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.table tbody tr:hover {
+    background-color: #f1f5f9;
+    transform: scale(1.002);
+    box-shadow: inset 0 2px 8px var(--shadow-sm);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table tbody td {
+    padding: 1rem 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #5a6268;
+}
+
+.table tbody td.text-center {
+    text-align: center;
+}
+
+.table a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+.table a:hover {
+    color: var(--primary-dark-blue);
+    text-decoration: underline;
+}
+
+.table-index {
+    font-weight: 700;
+    color: var(--primary-blue);
+    width: 50px;
+}
+
+.timestamp-badge {
+    background-color: var(--bg-light);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+/* ============================ */
+/* الشارات (Badges) */
+/* ============================ */
+.badge {
+    padding: 0.6em 1em;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: none;
+}
+
+.badge-lg {
+    padding: 0.6em 1.2em;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge.bg-light {
+    background-color: var(--bg-light) !important;
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+
+.badge.bg-success {
+    background-color: var(--accent-green) !important;
+    color: var(--text-light);
+}
+
+.badge.bg-danger {
+    background-color: var(--accent-red) !important;
+    color: var(--text-light);
+}
+
+/* ============================ */
+/* رسالة عدم وجود بيانات */
+/* ============================ */
+.no-data-message {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.no-data-message i {
+    color: #ccc;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.no-data-message p {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+/* ============================ */
+/* التكييف مع الشاشات الصغيرة */
+/* ============================ */
+@media (max-width: 991.98px) {
+    .display-4.fw-bold {
+        font-size: 2.2rem;
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .card-header .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #recordCount {
+        align-self: flex-start;
+    }
+
+    .filter-content {
+        padding: 1.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .stats-container {
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .container-fluid.py-4 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .display-4.fw-bold {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .display-4.fw-bold i {
+        font-size: 2rem;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .card-body,
+    .filter-content {
+        padding: 1rem;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .badge-lg {
+        padding: 0.4em 0.8em;
+        font-size: 0.8em;
+    }
+
+    .table-responsive {
+        border-radius: 0;
+        border: none;
+    }
+
+    .table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table thead {
+        display: table;
+        width: 100%;
+    }
+
+    .table tbody {
+        display: block;
+    }
+
+    .table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-light);
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        display: block;
+        box-shadow: 0 2px 8px var(--shadow-sm);
+    }
+
+    .table td {
+        display: block;
+        text-align: right;
+        padding: 0.75rem 1rem;
+        position: relative;
+        border: none;
+        border-bottom: 1px dashed var(--border-light);
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        width: 40%;
+    }
+
+    .table tbody td:last-child {
+        border-bottom: none;
+        text-align: center;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .filter-content .row {
+        flex-direction: column;
+    }
+
+    .filter-content .col-md-3 {
+        width: 100%;
+    }
+
+    .btn.float-end {
+        float: none !important;
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-fluid.py-4 {
+        padding: 1rem !important;
+    }
+
+    .display-4.fw-bold {
+        font-size: 1.4rem;
+        gap: 8px;
+    }
+
+    .display-4.fw-bold i {
+        font-size: 1.5rem;
+    }
+
+    .flash-messages-container {
+        margin-bottom: 1rem;
+    }
+
+    .alert {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .alert i {
+        min-width: 18px;
+        font-size: 1rem;
+    }
+
+    .stats-container {
+        gap: 0.75rem;
+    }
+
+    .stat-card {
+        padding: 1rem 0.75rem;
+        border-right-width: 4px;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+        margin: 0.25rem 0;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .filter-card {
+        border-radius: var(--border-radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .filter-header {
+        padding: 1rem;
+    }
+
+    .filter-header h5 {
+        font-size: 1rem;
+    }
+
+    .filter-content {
+        padding: 1rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .card {
+        border-radius: var(--border-radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+    }
+
+    .card-header h6 {
+        font-size: 1rem;
+        gap: 8px;
+    }
+
+    #recordCount {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .table {
+        font-size: 0.8rem;
+    }
+
+    .table thead th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .table tbody td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .table td::before {
+        width: 35%;
+        font-size: 0.75rem;
+    }
+
+    .table-index {
+        width: 40px;
+    }
+
+    .timestamp-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .badge {
+        padding: 0.4em 0.8em;
+        font-size: 0.75em;
+    }
+
+    .badge-lg {
+        padding: 0.35em 0.7em;
+        font-size: 0.75em;
+        gap: 4px;
+    }
+
+    .btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn i {
+        margin-left: 0.25rem;
+    }
+
+    .no-data-message {
+        padding: 2rem 1rem;
+    }
+
+    .no-data-message i {
+        font-size: 2rem;
+    }
+
+    .no-data-message p {
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,90 @@
+/* static/css/admin_dashboard.css */  
+
+/* تحسين بطاقات الإحصائيات */  
+.stats-card {  
+    background-color: #ffffff; /* خلفية بيضاء */  
+    border: 1px solid #e0e0e0; /* حدود خفيفة */  
+    border-radius: 10px; /* حواف مستديرة أكثر */  
+    padding: 1.5rem;  
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* ظل خفيف */  
+    transition: all 0.3s ease-in-out; /* انتقال سلس عند التفاعل */  
+    height: 100%; /* لضمان تساوي الارتفاع في صف واحد */  
+    display: flex;  
+    align-items: center;  
+}  
+
+.stats-card:hover {  
+    transform: translateY(-5px) scale(1.02); /* رفع وتكبير خفيف عند التحويم */  
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* ظل أوضح عند التحويم */  
+    border-color: #a7d0ff; /* تغيير لون الحدود عند التحويم */  
+}  
+
+.stats-card .h6 {  
+    font-size: 0.9rem; /* تصغير حجم النص الثانوي */  
+    color: #6c757d; /* لون رمادي للنص الثانوي */  
+    margin-bottom: 0.5rem;  
+}  
+
+.stats-card .h3 {  
+    font-size: 2.2rem; /* تكبير حجم رقم الإحصائية */  
+    font-weight: 700; /* جعل الرقم سميكًا */  
+    color: #343a40; /* لون داكن للرقم */  
+    margin-bottom: 0;  
+}  
+
+.stats-card .fs-1 {  
+    font-size: 3rem !important; /* تكبير حجم الأيقونة أكثر */  
+    opacity: 0.7; /* جعل الأيقونة باهتة قليلاً */  
+}  
+
+/* ألوان أيقونات الإحصائيات */  
+.stats-card .text-primary { color: #0d6efd !important; }  
+.stats-card .text-success { color: #198754 !important; }  
+.stats-card .text-warning { color: #ffc107 !important; }  
+.stats-card .text-info { color: #0dcaf0 !important; }  
+
+
+/* تحسين قسم الإجراءات السريعة */  
+.card {  
+    border-radius: 10px;  
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);  
+    border: 1px solid #e0e0e0;  
+}  
+
+.card-title {  
+    font-size: 1.3rem;  
+    font-weight: 600;  
+    color: #343a40;  
+    margin-bottom: 1.5rem;  
+    display: flex;  
+    align-items: center;  
+    gap: 0.75rem;  
+}  
+
+.list-group-item-action {  
+    display: flex;  
+    align-items: center;  
+    gap: 1rem;  
+    padding: 1rem 1.25rem;  
+    font-size: 1.05rem;  
+    color: #495057;  
+    transition: all 0.2s ease-in-out;  
+    border-color: #eee; /* حدود أفتح بين العناصر */  
+}  
+
+.list-group-item-action:hover {  
+    background-color: #f8f9fa; /* خلفية فاتحة عند التحويم */  
+    color: #0056b3; /* لون أزرق للنص عند التحويم */  
+    transform: translateX(5px); /* تحريك خفيف لليمين عند التحويم */  
+}  
+
+.list-group-item-action i {  
+    font-size: 1.3rem;  
+    width: 25px; /* لتنسيق الأيقونات */  
+    text-align: center;  
+    color: #6c757d; /* لون رمادي للأيقونات */  
+}  
+
+.list-group-item-action:hover i {  
+    color: #007bff; /* لون أزرق للأيقونات عند التحويم */  
+}

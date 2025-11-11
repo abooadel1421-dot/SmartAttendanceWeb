@@ -1,0 +1,229 @@
+{# app/templates/admin/student_attendance_report.html #}
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+    <div class="container-fluid py-4">
+        <div class="page-header mb-4">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-user-check me-2"></i>
+                تقرير حضور الطالب: {{ student.first_name }} {{ student.last_name }}
+            </h1>
+        </div>
+
+        {# معلومات الطالب #}
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white py-3">
+                <h6 class="m-0 fw-bold">
+                    <i class="fas fa-info-circle me-2"></i>
+                    معلومات الطالب
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-user me-2"></i>الاسم الكامل:</strong> 
+                        {{ student.first_name }} {{ student.last_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-id-card me-2"></i>الرقم الأكاديمي:</strong> 
+                        <code>{{ student.student_id_number }}</code>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-book me-2"></i>التخصص:</strong> 
+                        {{ student.major or 'غير محدد' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-graduation-cap me-2"></i>المستوى/الصف:</strong> 
+                        {{ student.grade or 'غير محدد' }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-heart me-2"></i>حالة الطالب:</strong>
+                        {% if student.is_active %}
+                            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>نشط</span>
+                        {% else %}
+                            <span class="badge bg-danger"><i class="fas fa-ban me-1"></i>غير نشط</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-calendar-alt me-2"></i>تاريخ الميلاد:</strong>
+                        {% if student.date_of_birth %}
+                            {{ student.date_of_birth.strftime('%Y-%m-%d') }}
+                        {% else %}
+                            <span class="text-muted">غير متوفر</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-envelope me-2"></i>بريد ولي الأمر:</strong>
+                        {{ student.parent_email or 'غير متوفر' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-phone me-2"></i>هاتف ولي الأمر:</strong>
+                        {{ student.parent_phone_number or 'غير متوفر' }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-calendar-check me-2"></i>تاريخ التسجيل:</strong>
+                        {% if student.enrollment_date %}
+                            {{ student.enrollment_date.strftime('%Y-%m-%d %I:%M:%S %p') }}
+                        {% else %}
+                            <span class="text-muted">غير متوفر</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-user-tie me-2"></i>المستخدم المرتبط:</strong>
+                        {% if student.user_account %}
+                            <span class="badge bg-info">{{ student.user_account.username }}</span>
+                        {% else %}
+                            <span class="text-muted">غير مرتبط</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# إحصائيات الحضور #}
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-2">
+                            <i class="fas fa-arrow-right text-success me-2"></i>
+                            إجمالي الدخول
+                        </h6>
+                        <h3 class="text-success">
+                            {% set enter_count = attendance_logs | selectattr('status.value', 'equalto', 'ENTER') | list | length %}
+                            {{ enter_count }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-2">
+                            <i class="fas fa-arrow-left text-danger me-2"></i>
+                            إجمالي الخروج
+                        </h6>
+                        <h3 class="text-danger">
+                            {% set exit_count = attendance_logs | selectattr('status.value', 'equalto', 'EXIT') | list | length %}
+                            {{ exit_count }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-2">
+                            <i class="fas fa-list text-info me-2"></i>
+                            إجمالي السجلات
+                        </h6>
+                        <h3 class="text-info">{{ attendance_logs | length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# سجلات الحضور #}
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold">
+                    <i class="fas fa-table me-2"></i>
+                    سجلات الحضور والانصراف
+                </h6>
+                <small>إجمالي: <strong>{{ attendance_logs | length }}</strong> سجل</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width: 50px;">#</th>
+                                <th>تاريخ ووقت الحركة</th>
+                                <th class="text-center" style="width: 100px;">نوع الحركة</th>
+                                <th>الجهاز</th>
+                                <th>الموقع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in attendance_logs %}
+                            <tr>
+                                <td class="text-center">{{ loop.index }}</td>
+                                <td>
+                                    {% if log.timestamp %}
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ log.timestamp.strftime('%Y-%m-%d %I:%M:%S %p') }}
+                                    {% else %}
+                                        <span class="text-muted">غير متوفر</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if log.status %}
+                                        {% if log.status.value == 'ENTER' %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-arrow-right me-1"></i>دخول
+                                            </span>
+                                        {% elif log.status.value == 'EXIT' %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-arrow-left me-1"></i>خروج
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ log.status.value }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">غير محدد</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.device %}
+                                        <i class="fas fa-microchip me-1"></i>
+                                        <a href="{{ url_for('admin.edit_device', id=log.device.id) }}" class="text-decoration-none">
+                                            {{ log.device.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">جهاز غير موجود</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.device %}
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ log.device.location }}
+                                    {% else %}
+                                        <span class="text-muted">غير متوفر</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                    <strong>لا توجد سجلات حضور لهذا الطالب</strong>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# أزرار الإجراءات #}
+        <div class="mt-4 text-center">
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="fas fa-print me-2"></i>
+                طباعة التقرير
+            </button>
+            <a href="{{ url_for('admin.manage_students') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>
+                العودة للقائمة
+            </a>
+        </div>
+    </div>
+{% endblock admin_content %}

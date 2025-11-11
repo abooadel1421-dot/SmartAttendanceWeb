@@ -1,0 +1,576 @@
+{# app/templates/admin/reports_dashboard.html #}
+{% extends "admin/base.html" %}
+
+{% block head_css %}
+    {{ super() }}
+    <style>
+        /* ==================== متغيرات CSS ==================== */
+        :root {
+            --primary-blue: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+            --light-bg: #f8fafc;
+            --border-light: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --transition: 0.3s ease;
+        }
+
+        /* ==================== الصفحة الرئيسية ==================== */
+        .reports-dashboard {
+            padding-bottom: 2rem;
+        }
+
+        .page-title-reports {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--border-light);
+        }
+
+        .page-title-reports i {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== قسم الإحصائيات اليومية ==================== */
+        .today-stats-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            border: none;
+        }
+
+        .today-stats-card .card-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            border: none;
+            position: relative;
+        }
+
+        .today-stats-card .card-header h5 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .today-stats-card .card-body {
+            padding: 2.5rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light-bg);
+            border-radius: 12px;
+            transition: all var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-item h6 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .stat-item.success h3 { color: var(--success); }
+        .stat-item.danger h3 { color: var(--danger); }
+        .stat-item.info h3 { color: var(--info); }
+
+        /* ==================== شبكة التقارير ==================== */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            border: none;
+            overflow: hidden;
+            transition: all var(--transition);
+            position: relative;
+            border-left: 5px solid var(--primary-blue);
+        }
+
+        .report-card.border-left-success { border-left-color: var(--success); }
+        .report-card.border-left-info { border-left-color: var(--info); }
+        .report-card.border-left-warning { border-left-color: var(--warning); }
+        .report-card.border-left-secondary { border-left-color: #6b7280; }
+
+        .report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition);
+        }
+
+        .report-card .card-body {
+            padding: 2rem;
+        }
+
+        .report-subtitle {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .report-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .report-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-icon {
+            font-size: 3rem;
+            opacity: 0.2;
+            transition: all var(--transition);
+        }
+
+        .report-card:hover .report-icon {
+            opacity: 0.3;
+            transform: scale(1.1);
+        }
+
+        .btn-report {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-report:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary.btn-report {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            color: white;
+        }
+
+        .btn-success.btn-report {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-info.btn-report {
+            background: linear-gradient(135deg, var(--info), #0891b2);
+            color: white;
+        }
+
+        .btn-warning.btn-report {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        .btn-secondary.btn-report {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        /* ==================== قسم الاستخراج ==================== */
+        .export-section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 3rem 0 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .export-section-title i {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .export-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .export-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            padding: 0.85rem 1.25rem;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+            outline: none;
+        }
+
+        .export-btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .export-btn-group .btn {
+            padding: 0.85rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #0891b2);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        /* ==================== الرسوم المتحركة ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .report-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .report-card:nth-child(1) { animation-delay: 0.1s; }
+        .report-card:nth-child(2) { animation-delay: 0.2s; }
+        .report-card:nth-child(3) { animation-delay: 0.3s; }
+        .report-card:nth-child(4) { animation-delay: 0.4s; }
+        .report-card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* ==================== التجاوب مع الشاشات الصغيرة ==================== */
+        @media (max-width: 768px) {
+            .page-title-reports {
+                font-size: 1.75rem;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .export-row {
+                grid-template-columns: 1fr;
+            }
+
+            .export-btn-group {
+                flex-direction: column;
+            }
+
+            .export-btn-group .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-row {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                padding: 1.5rem;
+            }
+
+            .stat-item h3 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block admin_content %}
+    <div class="reports-dashboard">
+        <div class="container-fluid">
+            <!-- العنوان الرئيسي -->
+            <h1 class="page-title-reports">
+                <i class="fas fa-file-chart-line"></i>
+                لوحة تحكم التقارير
+            </h1>
+
+            <!-- الإحصائيات اليومية -->
+            <div class="today-stats-card">
+                <div class="card-header">
+                    <h5>
+                        <i class="fas fa-chart-pie"></i>
+                        إحصائيات اليوم
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="stats-row" id="todayStats">
+                        <div class="stat-item success">
+                            <h6>الطلاب الحاضرين</h6>
+                            <h3>-</h3>
+                        </div>
+                        <div class="stat-item danger">
+                            <h6>الطلاب الغائبين</h6>
+                            <h3>-</h3>
+                        </div>
+                        <div class="stat-item info">
+                            <h6>إجمالي السجلات</h6>
+                            <h3>-</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شبكة التقارير -->
+            <div class="reports-grid">
+                <!-- تقرير حضور الطلاب -->
+                <div class="card report-card border-left-primary">
+                    <div class="card-body">
+                        <div class="report-subtitle text-primary">التقارير الأساسية</div>
+                        <h3 class="report-title">تقرير حضور الطلاب</h3>
+                        <p class="report-description">تقرير مفصل عن حضور وغياب الطلاب مع إمكانية التصدير لطالب محدد.</p>
+                        <a href="{{ url_for('admin.manage_students') }}" class="btn btn-primary btn-report">
+                            <i class="fas fa-users"></i> عرض تقارير الطلاب
+                        </a>
+                        <div style="float: right;">
+                            <i class="fas fa-clipboard-list report-icon text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تقرير حالة البطاقات -->
+                <div class="card report-card border-left-success">
+                    <div class="card-body">
+                        <div class="report-subtitle text-success">تقارير البطاقات</div>
+                        <h3 class="report-title">تقرير حالة البطاقات</h3>
+                        <p class="report-description">حالة البطاقات (نشطة، غير نشطة، محظورة) والطالب المرتبطة.</p>
+                        <a href="{{ url_for('admin.card_status_report') }}" class="btn btn-success btn-report">
+                            <i class="fas fa-file-alt"></i> إنشاء تقرير
+                        </a>
+                        <div style="float: right;">
+                            <i class="fas fa-credit-card report-icon text-success"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تقرير نشاط الأجهزة -->
+                <div class="card report-card border-left-info">
+                    <div class="card-body">
+                        <div class="report-subtitle text-info">تقارير الأجهزة</div>
+                        <h3 class="report-title">تقرير نشاط الأجهزة</h3>
+                        <p class="report-description">سجلات استخدام الأجهزة وحالتها والوقت الأخير للاتصال.</p>
+                        <a href="{{ url_for('admin.generate_device_activity_report') }}" class="btn btn-info btn-report">
+                            <i class="fas fa-file-alt"></i> إنشاء تقرير
+                        </a>
+                        <div style="float: right;">
+                            <i class="fas fa-microchip report-icon text-info"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ملخص النظام -->
+                <div class="card report-card border-left-warning">
+                    <div class="card-body">
+                        <div class="report-subtitle text-warning">إحصائيات</div>
+                        <h3 class="report-title">ملخص النظام</h3>
+                        <p class="report-description">ملخص شامل لأعداد الطلاب، البطاقات، والأجهزة.</p>
+                        <a href="{{ url_for('admin.generate_system_summary_report') }}" class="btn btn-warning btn-report">
+                            <i class="fas fa-file-alt"></i> إنشاء تقرير
+                        </a>
+                        <div style="float: right;">
+                            <i class="fas fa-chart-bar report-icon text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تقرير حضور مخصص -->
+                <div class="card report-card border-left-secondary">
+                    <div class="card-body">
+                        <div class="report-subtitle text-secondary">تقارير الحضور</div>
+                        <h3 class="report-title">توليد تقرير حضور مخصص</h3>
+                        <p class="report-description">إنشاء تقارير حضور وغياب مخصصة بناءً على فترات زمنية، طلاب، أو مواقع محددة.</p>
+                        <a href="{{ url_for('admin.generate_attendance_report') }}" class="btn btn-secondary btn-report">
+                            <i class="fas fa-cogs"></i> تخصيص وإنشاء
+                        </a>
+                        <div style="float: right;">
+                            <i class="fas fa-calendar-alt report-icon text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم الاستخراج -->
+            <h3 class="export-section-title">
+                <i class="fas fa-download"></i>
+                استخراج سجلات الحضور
+            </h3>
+
+            <div class="export-card">
+                <div class="export-row">
+                    <div class="form-group">
+                        <label for="dateFrom" class="form-label">من التاريخ</label>
+                        <input type="date" id="dateFrom" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="dateTo" class="form-label">إلى التاريخ</label>
+                        <input type="date" id="dateTo" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentFilter" class="form-label">الطالب (اختياري)</label>
+                        <input type="text" id="studentFilter" class="form-control" placeholder="معرّف الطالب أو الاسم">
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceFilter" class="form-label">الجهاز (اختياري)</label>
+                        <input type="text" id="deviceFilter" class="form-control" placeholder="اسم الجهاز">
+                    </div>
+                </div>
+
+                <div class="export-btn-group">
+                    <button class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i>
+                        استخراج Excel
+                    </button>
+                    <button class="btn btn-info" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i>
+                        استخراج CSV
+                    </button>
+                    <button class="btn btn-danger" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        استخراج PDF
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateCustomReport()">
+                        <i class="fas fa-cog"></i>
+                        تقرير مخصص
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/reports_dashboard.js') }}"></script>
+{% endblock %}

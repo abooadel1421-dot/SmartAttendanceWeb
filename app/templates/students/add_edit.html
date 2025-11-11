@@ -1,0 +1,123 @@
+{% extends 'base.html' %}  
+
+{% block content %}  
+    <h1 class="mb-4">{% if is_edit %}تعديل طالب{% else %}إضافة طالب جديد{% endif %}</h1>  
+    <div class="row">  
+        <div class="col-md-8">  
+            <form action="" method="post">  
+                {{ form.hidden_tag() }}  
+                
+                <div class="mb-3">  
+                    {{ form.student_id_number.label(class="form-label") }}  
+                    {{ form.student_id_number(class="form-control", placeholder="أدخل رقم تعريف الطالب") }}  
+                    {% if form.student_id_number.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.student_id_number.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.first_name.label(class="form-label") }}  
+                    {{ form.first_name(class="form-control", placeholder="أدخل الاسم الأول") }}  
+                    {% if form.first_name.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.first_name.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.last_name.label(class="form-label") }}  
+                    {{ form.last_name(class="form-control", placeholder="أدخل الاسم الأخير") }}  
+                    {% if form.last_name.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.last_name.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.email.label(class="form-label") }}  
+                    {{ form.email(class="form-control", placeholder="أدخل البريد الإلكتروني") }}  
+                    {% if form.email.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.email.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.phone_number.label(class="form-label") }}  
+                    {{ form.phone_number(class="form-control", placeholder="أدخل رقم الهاتف") }}  
+                    {% if form.phone_number.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.phone_number.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.grade.label(class="form-label") }}  
+                    {{ form.grade(class="form-control", placeholder="أدخل الصف الدراسي") }}  
+                    {% if form.grade.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.grade.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.major.label(class="form-label") }}  
+                    {{ form.major(class="form-control", placeholder="أدخل التخصص (إن وجد)") }}  
+                    {% if form.major.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.major.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3">  
+                    {{ form.date_of_birth.label(class="form-label") }}  
+                    {{ form.date_of_birth(class="form-control", placeholder="YYYY-MM-DD") }}  
+                    {% if form.date_of_birth.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.date_of_birth.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+
+                <div class="mb-3 form-check">  
+                    {{ form.is_active(class="form-check-input") }}  
+                    {{ form.is_active.label(class="form-check-label") }}  
+                    {% if form.is_active.errors %}  
+                        <div class="invalid-feedback d-block">  
+                            {% for error in form.is_active.errors %}  
+                                <span>{{ error }}</span>  
+                            {% endfor %}  
+                        </div>  
+                    {% endif %}  
+                </div>  
+                
+                <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>  
+                <a href="{{ url_for('students.index') }}" class="btn btn-secondary me-2">إلغاء</a>  
+            </form>  
+        </div>  
+    </div>  
+{% endblock %}

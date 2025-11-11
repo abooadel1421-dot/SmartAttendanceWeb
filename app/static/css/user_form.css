@@ -1,0 +1,111 @@
+/* static/css/admin_user_form.css */  
+
+/* استيراد خطوط Cairo و Poppins إذا لم تكن موجودة بالفعل في public_base.css */  
+/* @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Poppins:wght@300;400;600;700&display=swap'); */  
+
+:root {  
+    /* تعريف متغيرات الألوان لاستخدامها هنا، أو الاعتماد على المتغيرات في public_base.css */  
+    --primary-color: #007bff;  
+    --primary-dark: #0056b3;  
+    --secondary-color: #6c757d;  
+    --border-color: #ced4da;  
+    --shadow-light: rgba(0, 0, 0, 0.08);  
+    --shadow-medium: rgba(0, 0, 0, 0.15);  
+}  
+
+/* تحسينات عامة للنموذج */  
+.form-control-lg, .form-select-lg {  
+    border-radius: 0.75rem; /* حواف دائرية أكبر لحقول الإدخال */  
+    padding: 0.8rem 1.25rem; /* تباعد داخلي أكبر */  
+    font-size: 1.1rem; /* خط أكبر */  
+    border: 1px solid var(--border-color);  
+    transition: all 0.3s ease;  
+}  
+
+.form-control-lg:focus, .form-select-lg:focus {  
+    border-color: var(--primary-color);  
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);  
+    outline: none;  
+}  
+
+.form-label {  
+    font-weight: 600;  
+    margin-bottom: 0.5rem;  
+    color: var(--text-dark); /* يجب أن يكون معرفًا في public_base.css */  
+}  
+
+/* تحسينات لزر الإرسال (submit button) */  
+.btn-primary.btn-lg {  
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark)); /* تدرج لوني */  
+    border: none;  
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);  
+    transition: all 0.3s ease;  
+}  
+
+.btn-primary.btn-lg:hover {  
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.6);  
+    transform: translateY(-2px);  
+}  
+
+.btn-outline-secondary.btn-lg {  
+    border-color: var(--secondary-color);  
+    color: var(--secondary-color);  
+    transition: all 0.3s ease;  
+}  
+
+.btn-outline-secondary.btn-lg:hover {  
+    background-color: var(--secondary-color);  
+    color: white;  
+    transform: translateY(-2px);  
+}  
+
+/* التنسيقات الخاصة بالتحقق من صحة النموذج (Validation feedback) */  
+.form-control.is-invalid, .form-select.is-invalid {  
+    border-color: #dc3545;  
+    padding-right: calc(1.5em + 0.75rem); /* مساحة لأيقونة الخطأ */  
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");  
+    background-repeat: no-repeat;  
+    background-position: left calc(0.375em + 0.1875rem) center; /* وضع الأيقونة لليسار في RTL */  
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);  
+}  
+
+.form-control.is-valid, .form-select.is-valid {  
+    border-color: #28a745;  
+    padding-right: calc(1.5em + 0.75rem); /* مساحة لأيقونة النجاح */  
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%2328a745'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M10 2L4 8l-2-2'/%3e%3c/svg%3e");  
+    background-repeat: no-repeat;  
+    background-position: left calc(0.375em + 0.1875rem) center; /* وضع الأيقونة لليسار في RTL */  
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);  
+}  
+
+.invalid-feedback {  
+    display: block;  
+    width: 100%;  
+    margin-top: 0.25rem;  
+    font-size: 0.875em;  
+    color: #dc3545;  
+}  
+
+/* لجعل حقل student_to_link يختفي ويظهر بناءً على اختيار الدور */  
+#student_to_link_field_container.d-none {  
+    display: none !important;  
+}  
+
+/* تكييف التنسيقات للشاشات الصغيرة */  
+@media (max-width: 767.98px) {  
+    .row.g-4 > div {  
+        padding-left: 0;  
+        padding-right: 0;  
+    }  
+    .form-group.d-flex {  
+        flex-direction: column;  
+        align-items: stretch;  
+    }  
+    .form-group.d-flex .btn {  
+        width: 100%;  
+        margin-bottom: 1rem;  
+    }  
+    .form-group.d-flex .btn:last-child {  
+        margin-bottom: 0;  
+    }  
+}

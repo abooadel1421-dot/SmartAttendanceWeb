@@ -1,0 +1,70 @@
+{# app/templates/teacher/reports.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="display-5 fw-bold mb-4">
+        <i class="fas fa-chart-bar me-3"></i>
+        {{ title }}
+    </h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h6 class="m-0"><i class="fas fa-chart-pie me-2"></i>إحصائيات هذا الشهر</h6>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                إجمالي سجلات الحضور/الخروج لهذا الشهر: <strong>{{ month_logs_count }}</strong>
+            </p>
+            <!-- يمكنك إضافة المزيد من الإحصائيات هنا -->
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-warning text-white">
+            <h6 class="m-0"><i class="fas fa-exclamation-triangle me-2"></i>الطلاب الأكثر غياباً هذا الشهر</h6>
+        </div>
+        <div class="card-body">
+            {% if attendance_stats %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>اسم الطالب</th>
+                            <th>الرقم الأكاديمي</th>
+                            <th>عدد الحضور</th>
+                            <th>عدد الغياب (تقديري)</th>
+                            <th>الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in attendance_stats %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ stat.student.full_name }}</td>
+                            <td><code>{{ stat.student.student_id_number }}</code></td>
+                            <td><span class="badge bg-success">{{ stat.present }}</span></td>
+                            <td><span class="badge bg-danger">{{ stat.absent }}</span></td>
+                            <td>
+                                <a href="{{ url_for('teacher.view_student_details', student_id=stat.student.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> التفاصيل
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-muted py-4">لا توجد بيانات حضور لهذا الشهر لعرضها.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- يمكن إضافة المزيد من أقسام التقارير هنا -->
+
+</div>
+{% endblock %}

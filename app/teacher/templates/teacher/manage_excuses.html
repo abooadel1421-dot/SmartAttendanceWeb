@@ -1,0 +1,163 @@
+{# app/templates/teacher/manage_excuses.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">إدارة أعذار الطلاب</h1>
+
+    {# الأعذار قيد المراجعة #}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+            <i class="fas fa-hourglass-half me-2"></i>أعذار قيد المراجعة ({{ pending_excuses|length }})
+        </div>
+        <div class="card-body">
+            {% if pending_excuses %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>تاريخ الغياب</th>
+                                <th>السبب</th>
+                                <th>تاريخ الإرسال</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for excuse in pending_excuses %}
+                            <tr>
+                                <td>{{ excuse.student.full_name }}</td>
+                                <td>{{ excuse.date_of_absence.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ excuse.reason }}</td>
+                                <td>{{ excuse.submitted_at.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#reviewModal{{ excuse.id }}" data-action="approve">
+                                        <i class="fas fa-check"></i> قبول
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal{{ excuse.id }}" data-action="reject">
+                                        <i class="fas fa-times"></i> رفض
+                                    </button>
+
+                                    {# Modal for reviewing excuse #}
+                                    <div class="modal fade" id="reviewModal{{ excuse.id }}" tabindex="-1" aria-labelledby="reviewModalLabel{{ excuse.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form action="{{ url_for('teacher.review_excuse', excuse_id=excuse.id) }}" method="POST">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="reviewModalLabel{{ excuse.id }}">مراجعة عذر الطالب: {{ excuse.student.full_name }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p><strong>تاريخ الغياب:</strong> {{ excuse.date_of_absence.strftime('%Y-%m-%d') }}</p>
+                                                        <p><strong>السبب:</strong> {{ excuse.reason }}</p>
+                                                        <div class="mb-3">
+                                                            <label for="reviewNotes{{ excuse.id }}" class="form-label">ملاحظات المراجعة (اختياري):</label>
+                                                            <textarea class="form-control" id="reviewNotes{{ excuse.id }}" name="review_notes" rows="3"></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="action" id="modalAction{{ excuse.id }}" value="">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                                        <button type="submit" class="btn btn-primary" id="modalSubmitBtn{{ excuse.id }}">تأكيد</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>لا توجد أعذار قيد المراجعة حالياً.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# الأعذار المعتمدة #}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>أعذار تمت الموافقة عليها (آخر 5)
+        </div>
+        <div class="card-body">
+            {% if approved_excuses %}
+                <ul class="list-group list-group-flush">
+                    {% for excuse in approved_excuses %}
+                    <li class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ excuse.student.full_name }} <small class="text-muted">({{ excuse.date_of_absence.strftime('%Y-%m-%d') }})</small></h6>
+                            <small class="text-success"><i class="fas fa-check"></i> تمت الموافقة</small>
+                        </div>
+                        <p class="mb-1">{{ excuse.reason }}</p>
+                        <small class="text-muted">تمت المراجعة بواسطة {{ excuse.reviewer.full_name if excuse.reviewer else 'N/A' }} في {{ excuse.reviewed_at.strftime('%Y-%m-%d %I:%M %p') }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>لا توجد أعذار تمت الموافقة عليها مؤخراً.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# الأعذار المرفوضة #}
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <i class="fas fa-times-circle me-2"></i>أعذار تم رفضها (آخر 5)
+        </div>
+        <div class="card-body">
+            {% if rejected_excuses %}
+                <ul class="list-group list-group-flush">
+                    {% for excuse in rejected_excuses %}
+                    <li class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ excuse.student.full_name }} <small class="text-muted">({{ excuse.date_of_absence.strftime('%Y-%m-%d') }})</small></h6>
+                            <small class="text-danger"><i class="fas fa-times"></i> تم الرفض</small>
+                        </div>
+                        <p class="mb-1">{{ excuse.reason }}</p>
+                        <small class="text-muted">ملاحظات المراجع: {{ excuse.review_notes if excuse.review_notes else 'لا توجد' }}</small><br>
+                        <small class="text-muted">تمت المراجعة بواسطة {{ excuse.reviewer.full_name if excuse.reviewer else 'N/A' }} في {{ excuse.reviewed_at.strftime('%Y-%m-%d %I:%M %p') }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>لا توجد أعذار تم رفضها مؤخراً.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const excuseId = this.dataset.bsTarget.replace('#reviewModal', '');
+                const action = this.dataset.action;
+                document.getElementById(`modalAction${excuseId}`).value = action;
+                const submitBtn = document.getElementById(`modalSubmitBtn${excuseId}`);
+                if (action === 'approve') {
+                    submitBtn.classList.remove('btn-danger');
+                    submitBtn.classList.add('btn-success');
+                    submitBtn.textContent = 'تأكيد القبول';
+                } else if (action === 'reject') {
+                    submitBtn.classList.remove('btn-success');
+                    submitBtn.classList.add('btn-danger');
+                    submitBtn.textContent = 'تأكيد الرفض';
+                }
+            });
+        });
+    </script>
+{% endblock %}

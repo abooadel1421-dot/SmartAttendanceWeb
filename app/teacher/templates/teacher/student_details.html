@@ -1,0 +1,158 @@
+{# app/teacher/templates/teacher/student_details.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher_dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- رأس الصفحة -->
+    <div class="teacher-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-user me-3"></i>
+                    {{ student.full_name }}
+                </h1>
+                <p class="text-muted">الرقم الأكاديمي: <code>{{ student.student_id_number }}</code></p>
+            </div>
+            <a href="{{ url_for('teacher.view_students') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>العودة
+            </a>
+        </div>
+    </div>
+
+    <!-- معلومات الطالب -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0">معلومات الطالب</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>الاسم الكامل:</strong> {{ student.full_name }}</p>
+                    <p><strong>الرقم الأكاديمي:</strong> <code>{{ student.student_id_number }}</code></p>
+                    <p><strong>التخصص:</strong> {{ student.major or 'غير محدد' }}</p>
+                    <p><strong>المستوى:</strong> {{ student.grade or 'غير محدد' }}</p>
+                    <p><strong>تاريخ الميلاد:</strong> 
+                        {% if student.date_of_birth %}
+                            {{ student.date_of_birth.strftime('%Y-%m-%d') }}
+                        {% else %}
+                            غير محدد
+                        {% endif %}
+                    </p>
+                    <p><strong>الحالة:</strong>
+                        {% if student.is_active %}
+                            <span class="badge bg-success">نشط</span>
+                        {% else %}
+                            <span class="badge bg-danger">غير نشط</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- إحصائيات الحضور -->
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="m-0">إحصائيات الحضور</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">إجمالي السجلات</h6>
+                            <h3 class="text-info">{{ total_logs }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">الدخول</h6>
+                            <h3 class="text-success">{{ enter_count }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">الخروج</h6>
+                            <h3 class="text-danger">{{ exit_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- معلومات الاتصال -->
+    {% if student.parent_email or student.parent_phone_number %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="m-0">معلومات الاتصال بولي الأمر</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>البريد الإلكتروني:</strong> {{ student.parent_email or 'غير محدد' }}</p>
+                    <p><strong>رقم الهاتف:</strong> {{ student.parent_phone_number or 'غير محدد' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- سجلات الحضور -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0">
+                        <i class="fas fa-history me-2"></i>سجلات الحضور الأخيرة
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>التاريخ والوقت</th>
+                                    <th>النوع</th>
+                                    <th>الجهاز</th>
+                                    <th>الموقع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in attendance_logs %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ log.timestamp.strftime('%Y-%m-%d %I:%M:%S %p') if log.timestamp else '-' }}</td>
+                                    <td>
+                                        {% if log.status.value == 'ENTER' %}
+                                            <span class="badge bg-success"><i class="fas fa-arrow-right me-1"></i>دخول</span>
+                                        {% elif log.status.value == 'EXIT' %}
+                                            <span class="badge bg-danger"><i class="fas fa-arrow-left me-1"></i>خروج</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">غير محدد</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.device.name if log.device else 'غير معروف' }}</td>
+                                    <td>{{ log.device.location if log.device else 'غير معروف' }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">لا توجد سجلات حضور</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/teacher_dashboard.js') }}"></script>
+{% endblock %}

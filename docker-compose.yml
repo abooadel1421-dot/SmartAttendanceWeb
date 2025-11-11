@@ -1,0 +1,35 @@
+version: '3.8'  
+
+services:  
+  web:  
+    build: .  
+    ports:  
+      - "5000:5000"  
+    volumes:  
+      - .:/app  
+    environment:  
+      FLASK_ENV: development  
+      DATABASE_URL: mysql+mysqlconnector://user:password@db/smart_nfc_db  
+    depends_on:  
+      - db  
+    networks:  
+      - app-network  
+
+  db:  
+    image: mysql:8.0  
+    environment:  
+      MYSQL_ROOT_PASSWORD: root_password  
+      MYSQL_DATABASE: smart_nfc_db  
+      MYSQL_USER: user  
+      MYSQL_PASSWORD: password  
+    volumes:  
+      - db_data:/var/lib/mysql  
+    networks:  
+      - app-network  
+
+volumes:  
+  db_data:  
+
+networks:  
+  app-network:  
+    driver: bridge

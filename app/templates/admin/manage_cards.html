@@ -1,0 +1,516 @@
+{# app/templates/admin/manage_cards.html - النسخة الكاملة المحدثة #}  
+{% extends "admin/base.html" %}  
+
+{% block head_css %}  
+    {{ super() }}  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_cards.css') }}">  
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+    
+    <style>
+        /* البحث المتقدم - CSS مدمج */
+        .advanced-search-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            cursor: pointer;
+        }
+
+        .search-header:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .search-header h5 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-header h5 i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-toggle-search {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-toggle-search:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: rotate(180deg);
+        }
+
+        .search-filters {
+            padding: 2rem;
+            background: white;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.4s, opacity 0.4s;
+            opacity: 1;
+        }
+
+        .search-filters.collapsed {
+            max-height: 0;
+            padding: 0 2rem;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .search-label {
+            font-weight: 600;
+            color: #343a40;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            right: 12px;
+            color: #17a2b8;
+            pointer-events: none;
+            font-size: 0.9rem;
+        }
+
+        .search-input,
+        .search-select,
+        .search-date {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-family: inherit;
+            color: #343a40;
+            background-color: white;
+            width: 100%;
+        }
+
+        .search-select,
+        .search-date {
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+
+        .search-input:focus,
+        .search-select:focus,
+        .search-date:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+            background-color: #f0f7ff;
+        }
+
+        .search-input::placeholder {
+            color: #adb5bd;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            grid-column: 1 / -1;
+        }
+
+        .btn-apply-filters,
+        .btn-reset-filters {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-apply-filters {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-apply-filters:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+            background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+        }
+
+        .btn-apply-filters:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-reset-filters {
+            background-color: #e9ecef;
+            color: #343a40;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn-reset-filters:hover {
+            background-color: #dee2e6;
+            border-color: #adb5bd;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset-filters:active {
+            transform: translateY(0);
+        }
+
+        .results-count {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #6c757d;
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background-color: #f0f0f0;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .results-count.active {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        /* إصلاح عرض البيانات في الجدول */
+        .table tbody td {
+            max-width: none !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow: visible !important;
+            padding: 1rem 1rem !important;
+        }
+
+        .table tbody td a {
+            word-break: break-word;
+        }
+
+        @media (max-width: 767.98px) {
+            .advanced-search-container {
+                margin: 0 -15px 1.5rem;
+                border-radius: 0;
+            }
+
+            .search-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .search-filters {
+                padding: 1.5rem;
+            }
+
+            .search-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .search-actions {
+                flex-direction: column;
+            }
+
+            .btn-apply-filters,
+            .btn-reset-filters {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .results-count {
+                width: 100%;
+                margin: 0;
+                text-align: center;
+            }
+
+            .search-input,
+            .search-select,
+            .search-date {
+                padding: 0.65rem 1rem 0.65rem 2.2rem;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .search-header h5 {
+                font-size: 1rem;
+            }
+
+            .search-label {
+                font-size: 0.85rem;
+            }
+
+            .search-input,
+            .search-select,
+            .search-date {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.75rem 0.6rem 2rem;
+            }
+        }
+    </style>
+{% endblock %}  
+
+{% block admin_content %}  
+    <div class="container-fluid py-4">  
+        <h1 class="mb-4 text-center display-4 fw-bold text-primary">إدارة البطاقات</h1>  
+
+        {% with messages = get_flashed_messages(with_categories=true) %}  
+            {% if messages %}  
+                <div class="flash-messages-container">  
+                    {% for category, message in messages %}  
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">  
+                            {{ message }}  
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+                        </div>  
+                    {% endfor %}  
+                </div>  
+            {% endif %}  
+        {% endwith %}  
+
+        <!-- شريط البحث المتقدم -->
+        <div class="advanced-search-container mb-4">
+            <div class="search-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-filter me-2"></i> بحث متقدم
+                </h5>
+                <button class="btn-toggle-search" id="toggleSearchBtn" type="button">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <div class="search-filters" id="searchFilters">
+                <div class="search-row">
+                    <!-- البحث بالاسم أو رقم البطاقة -->
+                    <div class="search-group">
+                        <label for="searchInput" class="search-label">البحث العام</label>
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="search-input" 
+                                placeholder="ابحث بالاسم أو رقم البطاقة..."
+                            >
+                        </div>
+                    </div>
+
+                    <!-- البحث حسب الحالة -->
+                    <div class="search-group">
+                        <label for="statusFilter" class="search-label">الحالة</label>
+                        <select id="statusFilter" class="search-select">
+                            <option value="">-- الكل --</option>
+                            <option value="active">نشطة</option>
+                            <option value="inactive">غير نشطة</option>
+                            <option value="lost">مفقودة</option>
+                            <option value="damaged">تالفة</option>
+                        </select>
+                    </div>
+
+                    <!-- البحث حسب تاريخ الإصدار -->
+                    <div class="search-group">
+                        <label for="dateFromFilter" class="search-label">من التاريخ</label>
+                        <input 
+                            type="date" 
+                            id="dateFromFilter" 
+                            class="search-date"
+                        >
+                    </div>
+
+                    <div class="search-group">
+                        <label for="dateToFilter" class="search-label">إلى التاريخ</label>
+                        <input 
+                            type="date" 
+                            id="dateToFilter" 
+                            class="search-date"
+                        >
+                    </div>
+                </div>
+
+                <div class="search-row search-actions">
+                    <button id="applyFiltersBtn" class="btn-apply-filters" type="button">
+                        <i class="fas fa-check me-2"></i> تطبيق
+                    </button>
+                    <button id="resetFiltersBtn" class="btn-reset-filters" type="button">
+                        <i class="fas fa-redo me-2"></i> إعادة تعيين
+                    </button>
+                    <span class="results-count" id="resultsCount"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-lg mb-4 border-0 rounded-4">  
+            <div class="card-header bg-gradient-primary text-white py-3 d-flex justify-content-between align-items-center rounded-top-4">  
+                <h6 class="m-0 font-weight-bold">قائمة البطاقات</h6>  
+                <a href="{{ url_for('admin.add_card') }}" class="btn btn-light btn-sm custom-add-btn">  
+                    <i class="fas fa-plus me-2"></i> إصدار بطاقة جديدة  
+                </a>  
+            </div>  
+            <div class="card-body p-4">  
+                <div class="table-responsive">  
+                    <table class="table table-hover" id="cardsDataTable" width="100%" cellspacing="0">  
+                        <thead>  
+                            <tr>  
+                                <th>#</th>  
+                                <th>رقم البطاقة (UID)</th>  
+                                <th>الطالب</th>  
+                                <th>تاريخ الإصدار</th>  
+                                <th>الحالة</th>  
+                                <th>الإجراءات</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            {% for card in cards %}  
+                            <tr data-card-id="{{ card.id }}" data-status="{{ card.status.value if card.status else '' }}" data-issued-date="{{ card.issued_at.strftime('%Y-%m-%d') if card.issued_at else '' }}">  
+                                <td data-label="#">{{ loop.index }}</td>  
+                                <td data-label="رقم البطاقة (UID)">
+                                    {{ card.card_uid }}
+                                </td>  
+                                <td data-label="الطالب">  
+                                    {% if card.student %}  
+                                        <a href="{{ url_for('admin.edit_student', id=card.student.id) }}" class="text-primary fw-bold">  
+                                            {{ card.student.name }} ({{ card.student.student_id_number }})  
+                                        </a>  
+                                    {% else %}  
+                                        <span class="text-muted fst-italic">غير مرتبط بطالب</span>  
+                                    {% endif %}  
+                                </td>  
+                                <td data-label="تاريخ الإصدار">
+                                    {% if card.issued_at %}
+                                        {{ card.issued_at.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        غير متوفر
+                                    {% endif %}
+                                </td>  
+                                <td data-label="الحالة">  
+                                    {% if card.status %}
+                                        {% if card.status.value == 'active' %}  
+                                            <span class="badge bg-success">نشطة</span>  
+                                        {% elif card.status.value == 'inactive' %}  
+                                            <span class="badge bg-warning">غير نشطة</span>  
+                                        {% elif card.status.value == 'lost' %}  
+                                            <span class="badge bg-danger">مفقودة</span>  
+                                        {% elif card.status.value == 'damaged' %}  
+                                            <span class="badge bg-secondary">تالفة</span>  
+                                        {% else %}  
+                                            <span class="badge bg-info">{{ card.status.value }}</span>  
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-secondary">غير معروفة</span>
+                                    {% endif %}
+                                </td>  
+                                <td data-label="الإجراءات">  
+                                    <a href="{{ url_for('admin.edit_card', id=card.id) }}" class="btn btn-info btn-sm" title="تعديل">  
+                                        <i class="fas fa-edit"></i>  
+                                    </a>  
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCardModal{{ card.id }}" title="حذف">  
+                                        <i class="fas fa-trash"></i>  
+                                    </button>  
+
+                                    <div class="modal fade" id="deleteCardModal{{ card.id }}" tabindex="-1" aria-labelledby="deleteCardModalLabel{{ card.id }}" aria-hidden="true">  
+                                        <div class="modal-dialog modal-dialog-centered">  
+                                            <div class="modal-content rounded-4 shadow-lg">  
+                                                <div class="modal-header bg-danger text-white p-4 rounded-top-4">  
+                                                    <h5 class="modal-title" id="deleteCardModalLabel{{ card.id }}">تأكيد الحذف</h5>  
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>  
+                                                </div>  
+                                                <div class="modal-body p-4">  
+                                                    <p class="lead mb-3">هل أنت متأكد أنك تريد حذف البطاقة <strong class="text-danger">{{ card.card_uid }}</strong>؟</p>  
+                                                    <p class="text-danger small fw-bold">لا يمكن التراجع عن هذا الإجراء.</p>  
+                                                </div>  
+                                                <div class="modal-footer p-3 bg-light rounded-bottom-4">  
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>  
+                                                    <form action="{{ url_for('admin.delete_card', id=card.id) }}" method="POST" style="display: inline;">  
+                                                        <button type="submit" class="btn btn-danger">حذف البطاقة</button>  
+                                                    </form>  
+                                                </div>  
+                                            </div>  
+                                        </div>  
+                                    </div>  
+                                </td>  
+                            </tr>  
+                            {% else %}  
+                            <tr>  
+                                <td colspan="6" class="text-center py-4 text-muted">لا توجد بطاقات مسجلة حتى الآن.</td>  
+                            </tr>  
+                            {% endfor %}  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+{% endblock %}  
+
+{% block scripts %}  
+    {{ super() }}  
+    <script src="{{ url_for('static', filename='js/advanced_search.js') }}"></script>  
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>  
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>  
+    <script>  
+        $(document).ready(function() {  
+            $('#cardsDataTable').DataTable({  
+                "language": {  
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/ar.json"  
+                },  
+                "responsive": true,  
+                "autoWidth": false,  
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "الكل"]],  
+                "pageLength": 10  
+            });  
+        });  
+    </script>  
+{% endblock %}

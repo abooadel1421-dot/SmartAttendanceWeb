@@ -1,0 +1,115 @@
+{# app/templates/admin/attendance_report_view.html #}
+{% extends "admin/base.html" %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_logs.css') }}"> {# تأكد من وجود هذا الملف #}
+{% endblock %}
+
+{% block admin_content %}
+    <div class="container-fluid py-4">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-chart-bar me-3"></i>
+            تقرير الحضور المخصص
+        </h1>
+
+        {# رسائل الفلاش #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-info-circle me-2"></i>
+                    تفاصيل التقرير
+                </h6>
+            </div>
+            <div class="card-body">
+                <p><strong>التاريخ:</strong> {{ report_date }}</p>
+                <p><strong>الوقت:</strong> من {{ start_time }} إلى {{ end_time }}</p>
+                <p><strong>الموقع:</strong> {{ location }}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <a href="{{ url_for('admin.finalize_attendance_report') }}" class="btn btn-success me-2">
+                    <i class="fas fa-check-double me-2"></i>
+                    تعميم التقرير
+                </a>
+                 <a href="{{ url_for('admin.generate_attendance_report') }}" class="btn btn-secondary">
+                    <i class="fas fa-redo me-2"></i>
+                    تعديل معايير التقرير
+                </a>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4 mt-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-users me-2"></i>
+                    نتائج الحضور
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px;">#</th>
+                                <th>الطالب</th>
+                                <th class="text-center" style="width: 120px;">الرقم الأكاديمي</th>
+                                <th class="text-center" style="width: 150px;">حالة الحضور</th>
+                                <th class="text-center" style="width: 180px;">وقت الدخول الفعلي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in report_results %}
+                            <tr>
+                                <td class="text-center">{{ loop.index }}</td>
+                                <td>
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>
+                                    {{ result.student.full_name }}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark">{{ result.student.student_id_number }}</span>
+                                </td>
+                                <td class="text-center">
+                                    {% if result.status == 'حاضر' %}
+                                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>حاضر</span>
+                                    {% elif result.status == 'متأخر' %}
+                                        <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>متأخر</span>
+                                    {% else %} {# غائب أو غائب (متأخر جداً) #}
+                                        <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>غائب</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if result.actual_entry_time %}
+                                        {{ result.actual_entry_time.strftime('%H:%M:%S') }}
+                                    {% else %}
+                                        <span class="text-muted">لم يسجل دخول</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="no-data-message">
+                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted fs-6">لا توجد بيانات لهذا التقرير.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

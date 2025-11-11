@@ -1,0 +1,228 @@
+/* static/css/public_base.css - تحديث لجعل التصميم أفخم */  
+
+/* استيراد الخطوط: خط Cairo الأنيق وخط Poppins العصري */  
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Poppins:wght@300;400;600;700&display=swap');  
+
+:root {  
+    /* لوحة ألوان أكثر حيوية وعمقًا */  
+    --primary-color: #007bff; /* أزرق أساسي */  
+    --primary-dark: #0056b3;  /* أزرق داكن */  
+    --secondary-color: #6c757d; /* رمادي ثانوي */  
+    --accent-color: #20c997; /* لون مميز (أخضر تركواز) */  
+    --text-dark: #212529;    /* لون نص داكن */  
+    --text-light: #495057;   /* لون نص فاتح */  
+    --body-bg: #e9ecef;      /* خلفية فاتحة جدًا */  
+    --card-bg: #ffffff;      /* خلفية البطاقات */  
+    --border-color: #dee2e6; /* لون حدود فاتح */  
+    --shadow-light: rgba(0, 0, 0, 0.08); /* ظل خفيف */  
+    --shadow-medium: rgba(0, 0, 0, 0.15); /* ظل متوسط */  
+}  
+
+body {  
+    font-family: 'Cairo', sans-serif; /* للغة العربية */  
+    direction: rtl;  
+    text-align: right;  
+    background-color: var(--body-bg);  
+    color: var(--text-dark);  
+    line-height: 1.7; /* مسافة أسطر أفضل */  
+    margin: 0;  
+    padding: 0;  
+    overflow-x: hidden; /* لمنع شريط التمرير الأفقي */  
+}  
+
+/* استخدام خط Poppins للعناصر الإنجليزية والأرقام إذا لزم الأمر */  
+body :lang(en) {  
+    font-family: 'Poppins', sans-serif;  
+}  
+
+h1, h2, h3, h4, h5, h6 {  
+    font-family: 'Cairo', sans-serif;  
+    color: var(--text-dark);  
+    font-weight: 700; /* خط سميك للعناوين */  
+    margin-bottom: 1.5rem;  
+    line-height: 1.3;  
+}  
+h1 { font-size: 2.5rem; }  
+h2 { font-size: 2rem; }  
+h3 { font-size: 1.75rem; }  
+
+p {  
+    margin-bottom: 1rem;  
+    color: var(--text-light);  
+}  
+
+a {  
+    color: var(--primary-color);  
+    text-decoration: none;  
+    transition: color 0.3s ease, transform 0.2s ease;  
+}  
+
+a:hover {  
+    color: var(--primary-dark);  
+    transform: translateY(-2px); /* تأثير بسيط عند التحويم */  
+}  
+
+/* تحسينات الـ Navbar */  
+.navbar {  
+    background: linear-gradient(to right, var(--primary-color), var(--primary-dark)); /* تدرج لوني للخلفية */  
+    padding: 1rem 1.5rem;  
+    box-shadow: 0 4px 15px var(--shadow-medium); /* ظل أعمق */  
+    border-bottom-left-radius: 10px; /* حواف دائرية أنيقة */  
+    border-bottom-right-radius: 10px;  
+}  
+
+.navbar-brand {  
+    font-family: 'Poppins', sans-serif; /* خط مختلف للعلامة التجارية */  
+    font-weight: 900; /* سمك إضافي */  
+    font-size: 1.8rem;  
+    color: #fff !important;  
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3); /* ظل نص خفيف */  
+    letter-spacing: 1px; /* تباعد بين الحروف */  
+}  
+
+.navbar-nav .nav-link {  
+    color: rgba(255, 255, 255, 0.9) !important;  
+    font-family: 'Cairo', sans-serif;  
+    font-weight: 600; /* خط شبه سميك */  
+    padding: 0.7rem 1.2rem;  
+    margin: 0 0.3rem;  
+    border-radius: 8px; /* حواف دائرية للروابط */  
+    transition: all 0.3s ease;  
+    position: relative;  
+    overflow: hidden; /* لإخفاء تأثير التحويم */  
+}  
+
+.navbar-nav .nav-link::before {  
+    content: '';  
+    position: absolute;  
+    top: 0;  
+    left: 0;  
+    width: 100%;  
+    height: 100%;  
+    background: rgba(255, 255, 255, 0.2); /* طبقة خفيفة عند التحويم */  
+    transform: translateX(100%);  
+    transition: transform 0.3s ease-out;  
+    z-index: -1;  
+}  
+
+.navbar-nav .nav-link:hover::before {  
+    transform: translateX(0);  
+}  
+
+.navbar-nav .nav-link:hover,  
+.navbar-nav .nav-link.active {  
+    color: #fff !important;  
+    background-color: transparent; /* الخلفية ستأتي من ::before */  
+    transform: translateY(-2px);  
+}  
+
+.navbar-toggler {  
+    border-color: rgba(255, 255, 255, 0.2);  
+}  
+.navbar-toggler-icon {  
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");  
+}  
+
+/* Main content area */  
+main.container {  
+    padding-top: 3rem; /* مسافة علوية أكبر */  
+    padding-bottom: 4rem; /* مسافة سفلية أكبر */  
+    min-height: calc(100vh - 180px); /* ضبط الارتفاع ليتناسب مع navbar أكبر */  
+    background-color: var(--card-bg); /* خلفية بيضاء للمحتوى */  
+    border-radius: 15px; /* حواف دائرية للمحتوى الرئيسي */  
+    box-shadow: 0 8px 30px var(--shadow-light); /* ظل أوسع */  
+    margin-top: 2rem !important; /* هامش علوي أكبر لفصل المحتوى عن النافبار */  
+}  
+
+/* Alerts */  
+.alert {  
+    margin-bottom: 2rem; /* مسافة سفلية أكبر */  
+    border-radius: 10px;  
+    padding: 1.2rem 1.5rem;  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);  
+    font-weight: 600;  
+}  
+
+.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }  
+.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }  
+.alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }  
+.alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }  
+
+.alert .btn-close {  
+    font-size: 1.1rem;  
+    margin-right: 0;  
+    margin-left: 1.5rem;  
+    filter: invert(0.5); /* لجعل X الإغلاق أغمق قليلًا */  
+}  
+
+/* الأزرار (إضافة ستايل عام) */  
+.btn {  
+    font-family: 'Cairo', sans-serif;  
+    font-weight: 700;  
+    border-radius: 8px;  
+    padding: 0.75rem 1.5rem;  
+    transition: all 0.3s ease;  
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);  
+}  
+
+.btn:hover {  
+    transform: translateY(-3px);  
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);  
+}  
+
+.btn-primary {  
+    background-color: var(--primary-color);  
+    border-color: var(--primary-color);  
+}  
+.btn-primary:hover {  
+    background-color: var(--primary-dark);  
+    border-color: var(--primary-dark);  
+}  
+
+/* تحسينات للبطاقات أو لوحات التحكم */  
+.card {  
+    border: none;  
+    border-radius: 15px;  
+    box-shadow: 0 10px 30px var(--shadow-light);  
+    margin-bottom: 2rem;  
+}  
+.card-header {  
+    background: var(--primary-color);  
+    color: white;  
+    font-weight: 700;  
+    border-top-left-radius: 15px;  
+    border-top-right-radius: 15px;  
+    padding: 1.2rem 1.5rem;  
+}  
+.card-body {  
+    padding: 1.5rem;  
+}  
+
+/* أيقونات Font Awesome */  
+.fa, .fas, .far, .fal, .fab {  
+    margin-left: 0.5rem;  
+}  
+
+/* لتحسين تجربة المستخدم على الشاشات الصغيرة */  
+@media (max-width: 992px) {  
+    .navbar-brand {  
+        font-size: 1.5rem;  
+    }  
+    .navbar-nav .nav-link {  
+        padding: 0.5rem 1rem;  
+        text-align: center;  
+        margin: 0.5rem auto;  
+    }  
+    main.container {  
+        margin-top: 1rem !important;  
+        border-radius: 0; /* إلغاء الحواف الدائرية للمحتوى الرئيسي على الجوال */  
+        box-shadow: none;  
+        padding-left: 1rem;  
+        padding-right: 1rem;  
+    }  
+    h1 { font-size: 2rem; }  
+    h2 { font-size: 1.75rem; }  
+}

@@ -1,0 +1,135 @@
+{# app/templates/admin/manage_devices.html - تم التعديل #}  
+{% extends "admin/base.html" %}  
+
+{% block head_css %}  
+    {{ super() }}  
+    {# ملف CSS الخاص بهذه الصفحة #}  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_devices.css') }}">  
+    {# DataTables CSS #}  
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">  
+    {# Font Awesome for Icons #}  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+{% endblock %}  
+
+{% block admin_content %}  
+    <div class="container-fluid py-4">  
+        <h1 class="mb-4 text-center display-4 fw-bold text-primary">إدارة الأجهزة</h1>  
+
+        {# رسائل الفلاش (Flash Messages) - تم تحديثها لتتوافق مع Bootstrap 5 #}  
+        {% with messages = get_flashed_messages(with_categories=true) %}  
+            {% if messages %}  
+                <div class="flash-messages-container">  
+                    {% for category, message in messages %}  
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">  
+                            {{ message }}  
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+                        </div>  
+                    {% endfor %}  
+                </div>  
+            {% endif %}  
+        {% endwith %}  
+
+        <div class="card shadow-lg mb-4 border-0 rounded-4">  
+            <div class="card-header py-3 d-flex justify-content-between align-items-center bg-gradient-primary text-white rounded-top-4">  
+                <h6 class="m-0 font-weight-bold">قائمة الأجهزة</h6>  
+                <a href="{{ url_for('admin.add_device') }}" class="btn custom-add-btn">  
+                    <i class="fas fa-plus me-2"></i> إضافة جهاز جديد  
+                </a>  
+            </div>  
+            <div class="card-body p-4">  
+                <div class="table-responsive">  
+                    <table class="table table-hover table-striped" id="devicesDataTable" width="100%" cellspacing="0">  
+                        <thead>  
+                            <tr>  
+                                <th>#</th>  
+                                <th>اسم الجهاز</th>  
+                                <th>الرقم التسلسلي</th>  
+                                <th>الموقع</th>  
+                                <th>الحالة</th>  
+                                <th class="text-center">الإجراءات</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            {% for device in devices %}  
+                            <tr>  
+                                <td data-label="الترتيب:">{{ loop.index }}</td>  
+                                <td data-label="اسم الجهاز:">{{ device.name }}</td>  
+                                <td data-label="الرقم التسلسلي:">{{ device.serial_number }}</td>  
+                                <td data-label="الموقع:">{{ device.location }}</td>  
+                                <td data-label="الحالة:">  
+                                    {% if device.status == 'online' %}  
+                                        <span class="badge bg-success">متصل</span>  
+                                    {% elif device.status == 'offline' %}  
+                                        <span class="badge bg-danger">غير متصل</span>  
+                                    {% elif device.status == 'maintenance' %}  
+                                        <span class="badge bg-warning">صيانة</span>  
+                                    {% else %}  
+                                        <span class="badge bg-secondary">{{ device.status }}</span>  
+                                    {% endif %}  
+                                </td>  
+                                <td data-label="الإجراءات:" class="text-center">  
+                                    <a href="{{ url_for('admin.edit_device', id=device.id) }}" class="btn btn-info btn-sm" title="تعديل">  
+                                        <i class="fas fa-edit"></i>  
+                                    </a>  
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal{{ device.id }}" title="حذف">  
+                                        <i class="fas fa-trash"></i>  
+                                    </button>  
+
+                                    {# Modal تأكيد الحذف #}  
+                                    <div class="modal fade" id="deleteDeviceModal{{ device.id }}" tabindex="-1" aria-labelledby="deleteDeviceModalLabel{{ device.id }}" aria-hidden="true">  
+                                        <div class="modal-dialog modal-dialog-centered">  
+                                            <div class="modal-content rounded-4 shadow-lg">  
+                                                <div class="modal-header bg-danger text-white rounded-top-4">  
+                                                    <h5 class="modal-title" id="deleteDeviceModalLabel{{ device.id }}"><i class="fas fa-exclamation-triangle me-2"></i> تأكيد الحذف</h5>  
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>  
+                                                </div>  
+                                                <div class="modal-body p-4">  
+                                                    <p class="lead">هل أنت متأكد أنك تريد حذف الجهاز <strong>{{ device.name }} ({{ device.serial_number }})</strong>؟</p>  
+                                                    <p class="text-danger fw-bold"><i class="fas fa-exclamation-circle me-2"></i> لا يمكن التراجع عن هذا الإجراء!</p>  
+                                                </div>  
+                                                <div class="modal-footer p-3 bg-light rounded-bottom-4">  
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>  
+                                                    <form action="{{ url_for('admin.delete_device', id=device.id) }}" method="POST" style="display: inline;">  
+                                                        <button type="submit" class="btn btn-danger">حذف</button>  
+                                                    </form>  
+                                                </div>  
+                                            </div>  
+                                        </div>  
+                                    </div>  
+                                </td>  
+                            </tr>  
+                            {% else %}  
+                            <tr>  
+                                <td colspan="6" class="text-center py-4 text-muted">لا توجد أجهزة مسجلة حتى الآن.</td>  
+                            </tr>  
+                            {% endfor %}  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+{% endblock %}  
+
+{% block scripts %}  
+    {{ super() }}  
+    {# ملف JS الخاص بهذه الصفحة #}  
+    <script src="{{ url_for('static', filename='js/manage_devices.js') }}"></script>  
+    {# DataTables JS #}  
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>  
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>  
+    {# لغة DataTables العربية #}  
+    <script>  
+        $(document).ready(function() {  
+            $('#devicesDataTable').DataTable({  
+                "language": {  
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/ar.json"  
+                },  
+                "responsive": true, // تفعيل الاستجابة  
+                "autoWidth": false, // منع DataTables من ضبط العرض تلقائياً  
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "الكل"]], // خيارات عدد الصفوف  
+                "pageLength": 10 // عدد الصفوف الافتراضي  
+            });  
+        });  
+    </script>  
+{% endblock %}

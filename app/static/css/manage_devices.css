@@ -1,0 +1,467 @@
+/* static/css/manage_devices.css */  
+
+/* ========================================= */  
+/*  متغيرات CSS مخصصة (Custom CSS Variables) */  
+/* ========================================= */  
+:root {  
+    --primary-blue: #007bff;  
+    --primary-dark-blue: #0056b3;  
+    --accent-green: #28a745;  
+    --accent-yellow: #ffc107;  
+    --accent-red: #dc3545;  
+    --accent-info: #17a2b8;  
+    --text-dark: #343a40;  
+    --text-light: #f8f9fa;  
+    --bg-light: #f8f9fa;  
+    --bg-white: #ffffff;  
+    --border-light: #e9ecef;  
+    --shadow-sm: rgba(0, 0, 0, 0.05);  
+    --shadow-md: rgba(0, 0, 0, 0.1);  
+    --shadow-lg: rgba(0, 0, 0, 0.15);  
+    --transition-speed: 0.3s ease-in-out;  
+    --border-radius-sm: 0.5rem;  
+    --border-radius-md: 0.75rem;  
+    --border-radius-lg: 1rem;  
+}  
+
+/* ============================ */  
+/*  تحسينات الخطوط والترتيب العام */  
+/* ============================ */  
+body {  
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;  
+    color: var(--text-dark);  
+    background-color: var(--bg-light);  
+}  
+
+h1, h2, h3, h4, h5, h6 {  
+    font-family: 'Roboto', 'Segoe UI', sans-serif;  
+    color: var(--text-dark);  
+    font-weight: 700;  
+}  
+
+.container-fluid.py-4 {  
+    padding-top: 2.5rem !important;  
+    padding-bottom: 2.5rem !important;  
+}  
+
+/* ============================ */  
+/*  العنوان الرئيسي */  
+/* ============================ */  
+.display-4.fw-bold {  
+    font-size: 2.8rem;  
+    color: var(--primary-blue);  
+    margin-bottom: 2.5rem;  
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.08);  
+}  
+
+/* ============================ */  
+/*  رسائل الفلاش (Flash Messages) */  
+/* ============================ */  
+.flash-messages-container {  
+    margin-bottom: 2rem;  
+    max-width: 900px; /* تحديد عرض أقصى */  
+    margin-left: auto;  
+    margin-right: auto;  
+}  
+
+.alert {  
+    border-radius: var(--border-radius-md);  
+    padding: 1rem 1.5rem;  
+    font-weight: 500;  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    box-shadow: 0 4px 15px var(--shadow-sm);  
+    border: none;  
+    transition: all var(--transition-speed);  
+}  
+.alert-success { background-color: #d4edda; color: #155724; }  
+.alert-danger { background-color: #f8d7da; color: #721c24; }  
+.alert-warning { background-color: #fff3cd; color: #856404; }  
+.alert-info { background-color: #d1ecf1; color: #0c5460; }  
+
+.alert .btn-close {  
+    margin-right: 0;  
+    margin-left: 1rem;  
+    font-size: 0.85rem;  
+    opacity: 0.7;  
+    transition: opacity var(--transition-speed);  
+}  
+.alert .btn-close:hover {  
+    opacity: 1;  
+}  
+
+/* ============================ */  
+/*  بطاقة الجدول (Table Card) */  
+/* ============================ */  
+.card {  
+    border-radius: var(--border-radius-lg);  
+    box-shadow: 0 15px 40px var(--shadow-lg);  
+    overflow: hidden;  
+}  
+
+.card-header {  
+    background: linear-gradient(to right, var(--primary-blue), var(--primary-dark-blue));  
+    color: var(--text-light);  
+    padding: 1.5rem 2rem;  
+    border-bottom: none;  
+    position: relative;  
+    z-index: 1;  
+    overflow: hidden;  
+}  
+
+.card-header::before {  
+    content: '';  
+    position: absolute;  
+    top: -50%;  
+    left: -50%;  
+    width: 200%;  
+    height: 200%;  
+    background: rgba(255, 255, 255, 0.08);  
+    transform: rotate(30deg);  
+    z-index: -1;  
+}  
+
+.card-header h6 {  
+    color: var(--text-light);  
+    font-size: 1.25rem;  
+    font-weight: 700;  
+}  
+
+.custom-add-btn {  
+    background-color: var(--text-light);  
+    color: var(--primary-blue);  
+    border: none;  
+    padding: 0.75rem 1.5rem;  
+    border-radius: var(--border-radius-md);  
+    font-weight: 600;  
+    box-shadow: 0 4px 10px var(--shadow-sm);  
+    transition: all var(--transition-speed);  
+}  
+
+.custom-add-btn:hover {  
+    background-color: #e2e6ea;  
+    color: var(--primary-dark-blue);  
+    transform: translateY(-2px);  
+    box-shadow: 0 6px 15px var(--shadow-md);  
+}  
+
+.card-body {  
+    padding: 2rem;  
+    background-color: var(--bg-white);  
+}  
+
+/* ============================ */  
+/*  الجدول (Table) */  
+/* ============================ */  
+.table-responsive {  
+    border-radius: var(--border-radius-md);  
+    overflow: hidden;  
+    border: 1px solid var(--border-light);  
+}  
+
+.table {  
+    margin-bottom: 0; /* إزالة الهامش السفلي الافتراضي */  
+    min-width: 700px; /* لضمان عدم تداخل الأعمدة على الشاشات المتوسطة */  
+}  
+
+.table thead th {  
+    background-color: var(--primary-blue); /* لون خلفية رأس الجدول */  
+    color: var(--text-light);  
+    font-weight: 700;  
+    border-bottom: 2px solid var(--primary-dark-blue);  
+    padding: 1.2rem 1rem;  
+    vertical-align: middle;  
+    text-align: right;  
+    font-size: 0.95rem;  
+}  
+
+.table tbody tr {  
+    transition: background-color var(--transition-speed), transform var(--transition-speed);  
+}  
+
+.table tbody tr:hover {  
+    background-color: #f1f5f9;  
+    transform: translateY(-1px);  
+    box-shadow: 0 2px 8px var(--shadow-sm);  
+}  
+
+.table tbody td {  
+    padding: 1rem 1rem;  
+    vertical-align: middle;  
+    border-top: 1px solid var(--border-light);  
+    font-size: 0.9rem;  
+    color: #5a6268;  
+}  
+
+.table tbody tr:last-child td {  
+    border-bottom: none;  
+}  
+
+/* محاذاة خاصة لبعض الأعمدة */  
+.table thead th:last-child,  
+.table tbody td:last-child {  
+    text-align: center;  
+}  
+
+/* ============================ */  
+/*  شارات الحالة (Badges) */  
+/* ============================ */  
+.badge {  
+    padding: 0.6em 1em;  
+    border-radius: var(--border-radius-lg);  
+    font-weight: 600;  
+    font-size: 0.8em;  
+    min-width: 70px;  
+    display: inline-flex;  
+    align-items: center;  
+    justify-content: center;  
+    text-transform: uppercase;  
+}  
+
+.badge.bg-success { background-color: var(--accent-green) !important; color: var(--text-light); }  
+.badge.bg-warning { background-color: var(--accent-yellow) !important; color: var(--text-dark); }  
+.badge.bg-danger { background-color: var(--accent-red) !important; color: var(--text-light); }  
+.badge.bg-info { background-color: var(--accent-info) !important; color: var(--text-light); }  
+.badge.bg-secondary { background-color: #6c757d !important; color: var(--text-light); }  
+
+/* ============================ */  
+/*  أزرار الإجراءات في الجدول */  
+/* ============================ */  
+.table .btn-sm {  
+    padding: 0.4rem 0.75rem;  
+    font-size: 0.8rem;  
+    border-radius: var(--border-radius-sm);  
+    box-shadow: 0 2px 8px var(--shadow-sm);  
+    transition: all var(--transition-speed);  
+    margin: 0 3px;  
+}  
+
+.table .btn-sm:hover {  
+    transform: translateY(-2px);  
+    box-shadow: 0 5px 15px var(--shadow-md);  
+    opacity: 0.9;  
+}  
+
+.btn-info { background-color: #17a2b8; border-color: #17a2b8; color: var(--text-light); }  
+.btn-info:hover { background-color: #138496; border-color: #138496; color: var(--text-light); }  
+.btn-danger { background-color: #dc3545; border-color: #dc3545; color: var(--text-light); }  
+.btn-danger:hover { background-color: #c82333; border-color: #c82333; color: var(--text-light); }  
+
+/* ============================ */  
+/*  Modals (النوافذ المنبثقة) */  
+/* ============================ */  
+.modal-content {  
+    border-radius: var(--border-radius-lg);  
+    box-shadow: 0 20px 60px var(--shadow-lg);  
+    border: none;  
+    overflow: hidden;  
+}  
+
+.modal-header.bg-danger {  
+    background: linear-gradient(to right, #dc3545, #c82333);  
+    color: var(--text-light);  
+    border-top-left-radius: var(--border-radius-lg);  
+    border-top-right-radius: var(--border-radius-lg);  
+    padding: 1.25rem 2rem;  
+    border-bottom: none;  
+}  
+
+.modal-title {  
+    color: var(--text-light);  
+    font-weight: 700;  
+    font-size: 1.3rem;  
+}  
+
+.modal-body {  
+    padding: 2rem;  
+    color: var(--text-dark);  
+}  
+
+.modal-body p.lead {  
+    font-size: 1.1rem;  
+    line-height: 1.6;  
+    margin-bottom: 1rem;  
+}  
+
+.modal-body p.text-danger {  
+    font-size: 0.85rem;  
+    font-weight: 500;  
+    color: #e60000 !important;  
+}  
+
+.modal-footer {  
+    border-top: 1px solid var(--border-light);  
+    padding: 1.5rem 2rem;  
+    background-color: var(--bg-light);  
+}  
+
+/* ============================ */  
+/*  تحسينات DataTables */  
+/* ============================ */  
+.dataTables_wrapper .dataTables_paginate .paginate_button {  
+    padding: 0.6em 1em;  
+    border-radius: var(--border-radius-sm);  
+    margin: 0 3px;  
+    background-color: var(--bg-white);  
+    border: 1px solid var(--border-light);  
+    color: var(--primary-blue) !important;  
+    transition: all var(--transition-speed);  
+}  
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {  
+    background-color: var(--primary-blue);  
+    border-color: var(--primary-blue);  
+    color: var(--text-light) !important;  
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);  
+}  
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,  
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {  
+    background-color: var(--primary-blue);  
+    border-color: var(--primary-blue);  
+    color: var(--text-light) !important;  
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);  
+}  
+
+.dataTables_wrapper .dataTables_filter input,  
+.dataTables_wrapper .dataTables_length select {  
+    border: 1px solid var(--border-light);  
+    border-radius: var(--border-radius-sm);  
+    padding: 0.5rem 0.75rem;  
+    margin: 0 0.5rem;  
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);  
+}  
+
+.dataTables_wrapper .dataTables_filter input:focus,  
+.dataTables_wrapper .dataTables_length select:focus {  
+    border-color: var(--primary-blue);  
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);  
+    outline: none;  
+}  
+
+.dataTables_wrapper .dataTables_info,  
+.dataTables_wrapper .dataTables_length,  
+.dataTables_wrapper .dataTables_filter {  
+    color: var(--text-dark);  
+    font-size: 0.9rem;  
+    margin-bottom: 1rem;  
+}  
+
+/* ============================ */  
+/*  تكييف التنسيقات للشاشات الصغيرة (Responsive Design) */  
+/* ============================ */  
+@media (max-width: 991.98px) {  
+    .card-header {  
+        flex-direction: column;  
+        align-items: flex-start;  
+        padding: 1.5rem;  
+    }  
+    .card-header .custom-add-btn {  
+        margin-top: 1rem;  
+        width: 100%;  
+        text-align: center;  
+        padding: 0.8rem 1.5rem;  
+    }  
+}  
+
+@media (max-width: 767.98px) {  
+    .container-fluid.py-4 {  
+        padding-top: 1.5rem !important;  
+        padding-bottom: 1.5rem !important;  
+    }  
+    .display-4.fw-bold {  
+        font-size: 2.2rem;  
+        margin-bottom: 1.5rem;  
+    }  
+    .card-body {  
+        padding: 1.5rem;  
+    }  
+    .table-responsive {  
+        border-radius: var(--border-radius-md);  
+        border: none;  
+    }  
+    .table {  
+        min-width: unset;  
+        width: 100%;  
+        display: block;  
+    }  
+    .table thead {  
+        display: none;  
+    }  
+    .table tbody, .table tr, .table td {  
+        display: block;  
+        width: 100%;  
+    }  
+    .table tr {  
+        margin-bottom: 1.2rem;  
+        border: 1px solid var(--border-light);  
+        border-radius: var(--border-radius-md);  
+        box-shadow: 0 5px 15px var(--shadow-sm);  
+        background-color: var(--bg-white);  
+        overflow: hidden;  
+    }  
+    .table td {  
+        text-align: right;  
+        padding: 0.8rem 1rem;  
+        position: relative;  
+        border: none;  
+        border-bottom: 1px dashed var(--border-light);  
+        font-size: 0.9rem;  
+        padding-right: 45%;  
+    }  
+    .table td:last-child {  
+        border-bottom: none;  
+        text-align: center;  
+        padding-top: 1rem;  
+        padding-bottom: 1rem;  
+    }  
+    .table td::before {  
+        content: attr(data-label);  
+        position: absolute;  
+        right: 1rem;  
+        width: 40%;  
+        font-weight: 700;  
+        color: var(--primary-blue);  
+        text-align: right;  
+    }  
+
+    /* تحديث labels للخلايا على الشاشات الصغيرة */  
+    .table tbody td:nth-of-type(1):before { content: "الترتيب:"; }  
+    .table tbody td:nth-of-type(2):before { content: "اسم الجهاز:"; }  
+    .table tbody td:nth-of-type(3):before { content: "الرقم التسلسلي:"; }  
+    .table tbody td:nth-of-type(4):before { content: "الموقع:"; }  
+    .table tbody td:nth-of-type(5):before { content: "الحالة:"; }  
+    .table tbody td:nth-of-type(6):before { content: "الإجراءات:"; }  
+
+    /* تعديلات DataTables على الجوال */  
+    .dataTables_wrapper .row:first-child,  
+    .dataTables_wrapper .row:last-child {  
+        display: flex;  
+        flex-direction: column;  
+        align-items: center;  
+        margin: 0;  
+    }  
+    .dataTables_wrapper .dataTables_filter,  
+    .dataTables_wrapper .dataTables_length,  
+    .dataTables_wrapper .dataTables_info,  
+    .dataTables_wrapper .dataTables_paginate {  
+        width: 100%;  
+        text-align: center;  
+        margin-bottom: 1rem;  
+        padding: 0 15px;  
+    }  
+    .dataTables_wrapper .dataTables_filter input {  
+        width: calc(100% - 2rem);  
+    }  
+    .dataTables_wrapper .dataTables_paginate .paginate_button {  
+        margin: 0 2px;  
+        padding: 0.5em 0.8em;  
+    }  
+    .dataTables_wrapper .dataTables_info {  
+        order: 1;  
+    }  
+    .dataTables_wrapper .dataTables_paginate {  
+        order: 2;  
+    }  
+}

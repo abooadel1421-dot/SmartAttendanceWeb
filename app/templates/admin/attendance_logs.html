@@ -1,0 +1,181 @@
+{# app/templates/admin/attendance_logs.html #}
+{% extends "admin/base.html" %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_logs.css') }}">
+{% endblock %}
+
+{% block admin_content %}
+    <div class="container-fluid py-4">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-clipboard-list me-3"></i>
+            سجلات الحضور
+        </h1>
+
+        {# رسائل الفلاش #}
+        <div class="flash-messages-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            <div class="d-flex align-items-center gap-2">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check-circle"></i>
+                                {% elif category == 'danger' %}
+                                    <i class="fas fa-exclamation-circle"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% elif category == 'info' %}
+                                    <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {# الإحصائيات #}
+        <div class="stats-container mb-5">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" id="totalAccess">0</div>
+                <div class="stat-label">إجمالي المنح</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon denied">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-value" id="totalDenied">0</div>
+                <div class="stat-label">إجمالي الرفض</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value" id="totalRecords">0</div>
+                <div class="stat-label">إجمالي السجلات</div>
+            </div>
+        </div>
+
+        {# الجدول #}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-table me-2"></i>
+                        قائمة سجلات الحضور
+                    </h6>
+                    <small class="text-white bg-info px-2 py-1 rounded-pill" id="recordCount">
+                        0 سجل
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px;">#</th>
+                                <th>الطالب</th>
+                                <th class="text-center" style="width: 120px;">الرقم الأكاديمي</th>
+                                <th>الجهاز</th>
+                                <th>الموقع</th>
+                                <th class="text-center" style="width: 180px;">تاريخ ووقت الدخول</th>
+                                <th class="text-center" style="width: 100px;">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr class="attendance-row" data-log-id="{{ log.id }}">
+                                <td class="text-center">{{ loop.index }}</td>
+                                <td>
+                                    {% if log.student %}
+                                        <i class="fas fa-user-circle me-2 text-primary"></i>
+                                        {{ log.student.full_name }}
+                                    {% else %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-user-slash me-2"></i>
+                                            طالب غير موجود
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if log.student %}
+                                        <span class="badge bg-light text-dark">{{ log.student.student_id_number }}</span>
+                                    {% else %}
+                                        <span class="text-muted">غير متوفر</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.device %}
+                                        <i class="fas fa-microchip me-2 text-info"></i>
+                                        {{ log.device.name }}
+                                    {% else %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-ban me-2"></i>
+                                            جهاز غير موجود
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.device %}
+                                        <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                                        {{ log.device.location }}
+                                    {% else %}
+                                        <span class="text-muted">غير متوفر</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">
+                                        {% set hours = log.timestamp.hour %}
+                                        {% set minutes = log.timestamp.minute %}
+                                        {% set seconds = log.timestamp.second %}
+                                        {% set day = log.timestamp.day %}
+                                        {% set month = log.timestamp.month %}
+                                        {% set ampm = 'PM' if hours >= 12 else 'AM' %}
+                                        {% set hours_12 = (hours % 12) or 12 %}
+                                        {{ "%02d:%02d:%02d %s %02d/%02d" | format(hours_12, minutes, seconds, ampm, day, month) }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    {% if log.status.name == 'ENTER' %}
+                                        <span class="badge bg-success"><i class="fas fa-arrow-right me-1"></i>دخول</span>
+                                    {% elif log.status.name == 'EXIT' %}
+                                        <span class="badge bg-warning"><i class="fas fa-arrow-left me-1"></i>خروج</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ log.status.value }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="no-data-message">
+                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted fs-6">لا توجد سجلات حضور لعرضها</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <!-- تحميل socket.io للتحديث الفوري -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='js/attendance_logs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/attendance_realtime.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,12 @@
+<!-- app/templates/errors/500.html -->  
+{% extends "base.html" %}  
+
+{% block content %}  
+    <div class="container text-center mt-5">  
+        <h1>500</h1>  
+        <h2>خطأ داخلي في الخادم</h2>  
+        <p>عذرًا، حدث خطأ غير متوقع.</p>  
+        <p>فريقنا يعمل على إصلاحه. يرجى المحاولة مرة أخرى لاحقًا.</p>  
+        <p><a href="{{ url_for('main.index') }}">العودة إلى الصفحة الرئيسية</a></p>  
+    </div>  
+{% endblock %}

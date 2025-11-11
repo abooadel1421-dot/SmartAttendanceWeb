@@ -1,0 +1,162 @@
+{# app/templates/admin/student_form.html - تم التعديل #}  
+{% extends 'admin/base.html' %}  
+{% import 'bootstrap/wtf.html' as wtf %}  
+
+{% block head_css %}  
+    {{ super() }}  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_form.css') }}">  
+    {# إذا كنت تستخدم أي مكتبات CSS خاصة بـ datepicker أو غيرها، أضفها هنا #}  
+{% endblock %}  
+
+{% block admin_content %}  
+    <div class="container-fluid py-4">  
+        <h1 class="mb-4 text-center display-5 fw-bold text-primary">{{ title }}</h1>  
+
+        {# رسائل الفلاش (Flash Messages) - تم تحديثها لتتوافق مع Bootstrap 5 #}  
+        {% with messages = get_flashed_messages(with_categories=true) %}  
+            {% if messages %}  
+                <div class="flash-messages-container">  
+                    {% for category, message in messages %}  
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">  
+                            {{ message }}  
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+                        </div>  
+                    {% endfor %}  
+                </div>  
+            {% endif %}  
+        {% endwith %}  
+
+        <div class="card shadow-lg mb-4 border-0 rounded-4 form-card">  
+            <div class="card-header bg-gradient-primary text-white py-3 d-flex justify-content-between align-items-center rounded-top-4">  
+                <h6 class="m-0 font-weight-bold">{{ title }}</h6>  
+            </div>  
+            <div class="card-body p-4">  
+                <form action="" method="post" class="needs-validation" novalidate>  
+                    {{ form.hidden_tag() }}  
+
+                    <div class="row g-4 mb-4"> {# g-4 لإنشاء مسافات بين الأعمدة والصفوف #}  
+                        <div class="col-md-6">  
+                            <label for="{{ form.student_id_number.id }}" class="form-label">{{ form.student_id_number.label }}</label>  
+                            {{ wtf.form_field(form.student_id_number, class="form-control form-control-lg", placeholder="الرقم الأكاديمي للطالب") }}  
+                            {% if form.student_id_number.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.student_id_number.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                        <div class="col-md-6">  
+                            <label for="{{ form.first_name.id }}" class="form-label">{{ form.first_name.label }}</label>  
+                            {{ wtf.form_field(form.first_name, class="form-control form-control-lg", placeholder="الاسم الأول") }}  
+                            {% if form.first_name.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.first_name.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                    </div>  
+
+                    <div class="row g-4 mb-4">  
+                        <div class="col-md-6">  
+                            <label for="{{ form.last_name.id }}" class="form-label">{{ form.last_name.label }}</label>  
+                            {{ wtf.form_field(form.last_name, class="form-control form-control-lg", placeholder="اسم العائلة") }}  
+                            {% if form.last_name.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.last_name.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                        <div class="col-md-6">  
+                            <label for="{{ form.parent_email.id }}" class="form-label">{{ form.parent_email.label }}</label>  
+                            {{ wtf.form_field(form.parent_email, class="form-control form-control-lg", placeholder="بريد ولي الأمر الإلكتروني") }}  
+                            {% if form.parent_email.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.parent_email.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                    </div>  
+
+                    <div class="row g-4 mb-4">  
+                        <div class="col-md-6">  
+                            <label for="{{ form.parent_phone_number.id }}" class="form-label">{{ form.parent_phone_number.label }}</label>  
+                            {{ wtf.form_field(form.parent_phone_number, class="form-control form-control-lg", placeholder="رقم هاتف ولي الأمر") }}  
+                            {% if form.parent_phone_number.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.parent_phone_number.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                        <div class="col-md-6">  
+                            <label for="{{ form.grade.id }}" class="form-label">{{ form.grade.label }}</label>  
+                            {{ wtf.form_field(form.grade, class="form-select form-control-lg") }} {# استخدام form-select لـ select #}  
+                            {% if form.grade.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.grade.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                    </div>  
+
+                    <div class="row g-4 mb-4">  
+                        <div class="col-md-6">  
+                            <label for="{{ form.major.id }}" class="form-label">{{ form.major.label }}</label>  
+                            {{ wtf.form_field(form.major, class="form-control form-control-lg", placeholder="التخصص") }}  
+                            {% if form.major.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.major.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                        <div class="col-md-6">  
+                            <label for="{{ form.date_of_birth.id }}" class="form-label">{{ form.date_of_birth.label }}</label>  
+                            {{ wtf.form_field(form.date_of_birth, class="form-control form-control-lg datepicker", placeholder="اختر تاريخ الميلاد") }}  
+                            {% if form.date_of_birth.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.date_of_birth.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                    </div>  
+
+                    <div class="row g-4 mb-4">  
+                        <div class="col-md-6">  
+                            <label for="{{ form.user_to_link.id }}" class="form-label">{{ form.user_to_link.label }}</label>  
+                            {{ wtf.form_field(form.user_to_link, class="form-select form-control-lg") }}  
+                            {% if form.user_to_link.errors %}  
+                                <div class="invalid-feedback d-block">  
+                                    {% for error in form.user_to_link.errors %}{{ error }}{% endfor %}  
+                                </div>  
+                            {% endif %}  
+                        </div>  
+                        <div class="col-md-6 d-flex align-items-center">  
+                            <div class="form-check form-switch mt-4"> {# استخدام form-switch لمظهر أجمل #}  
+                                {{ wtf.form_field(form.is_active, class="form-check-input", role="switch") }}  
+                                <label class="form-check-label" for="{{ form.is_active.id }}">{{ form.is_active.label }}</label>  
+                                {% if form.is_active.errors %}  
+                                    <div class="invalid-feedback d-block">  
+                                        {% for error in form.is_active.errors %}{{ error }}{% endfor %}  
+                                    </div>  
+                                {% endif %}  
+                            </div>  
+                        </div>  
+                    </div>  
+
+                    <div class="form-group mt-5 text-center">  
+                        {{ wtf.form_field(form.submit, class="btn btn-primary btn-lg custom-submit-btn me-3") }}  
+                        <a href="{{ url_for('admin.manage_students') }}" class="btn btn-secondary btn-lg custom-cancel-btn">إلغاء</a>  
+                    </div>  
+                </form>  
+            </div>  
+        </div>  
+    </div>  
+{% endblock %}  
+
+{% block scripts %}  
+    {{ super() }}  
+    <script src="{{ url_for('static', filename='js/student_form.js') }}"></script>  
+    {# مكتبة Datepicker - مثال: Flatpickr #}  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">  
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script> {# لدعم اللغة العربية #}  
+
+{% endblock %}

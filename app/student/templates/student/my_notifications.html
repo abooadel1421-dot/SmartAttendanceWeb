@@ -1,0 +1,44 @@
+{# app/templates/student/notifications.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="display-5 fw-bold mb-4">
+        <i class="fas fa-bell me-3"></i>
+        {{ title }}
+    </h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h6 class="m-0"><i class="fas fa-envelope-open-text me-2"></i>الإشعارات الواردة</h6>
+        </div>
+        <div class="card-body">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <div class="alert {% if notification.status.value == 'UNREAD' %}alert-info{% else %}alert-secondary{% endif %} mb-3 {% if notification.status.value == 'UNREAD' %}border-start border-4 border-info{% endif %}" role="alert">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div>
+                            <i class="fas fa-user-tie me-2"></i>
+                            <strong>من: {{ notification.sender.full_name if notification.sender.full_name else notification.sender.username }}</strong>
+                        </div>
+                        <div>
+                            <small class="text-muted me-2">{{ notification.timestamp.strftime('%Y-%m-%d %I:%M %p') }}</small>
+                            {% if notification.status.value == 'UNREAD' %}
+                                <span class="badge bg-warning"><i class="fas fa-envelope"></i> غير مقروء</span>
+                            {% else %}
+                                <span class="badge bg-success"><i class="fas fa-envelope-open"></i> مقروء</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="mb-0">{{ notification.message }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="text-center text-muted py-4">لا توجد إشعارات واردة حتى الآن.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

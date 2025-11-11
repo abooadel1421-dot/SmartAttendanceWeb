@@ -1,0 +1,249 @@
+{# app/templates/teacher/generate_report.html #}
+{% extends "public_base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_content %}
+    {{ super() }}
+    <style>
+        .report-table td select {
+            width: 150px; /* لضبط عرض قائمة الحالة */
+        }
+        /* تحسينات إضافية */
+        .card-header i {
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .badge {
+            padding: 0.5em 0.75em;
+            font-size: 0.85em;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">إنشاء وتعديل تقرير الحضور</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-calendar-alt me-2"></i>تحديد تاريخ وفترة التقرير
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('teacher.generate_report') }}">
+                {{ form.hidden_tag() }}
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        {{ form.report_date.label(class="form-label") }}
+                        {{ form.report_date(class="form-control") }}
+                        {% for error in form.report_date.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.start_time.label(class="form-label") }}
+                        {{ form.start_time(class="form-control") }}
+                        {% for error in form.start_time.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.end_time.label(class="form-label") }}
+                        {{ form.end_time(class="form-control") }}
+                        {% for error in form.end_time.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if report_data %}
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-success text-white">
+                {# 🟢 تأكد من أن start_time و end_time موجودين قبل استدعاء strftime #}
+                <i class="fas fa-clipboard-list me-2"></i>كشف الحضور لـ {{ report_date.strftime('%Y-%m-%d') }} 
+                {% if start_time and end_time %}(من {{ start_time.strftime('%H:%M') }} إلى {{ end_time.strftime('%H:%M') }}){% endif %}
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover report-table" id="attendanceReportTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>اسم الطالب</th>
+                                <th>وقت الدخول (الفعلية)</th>
+                                <th>الحالة المحسوبة</th>
+                                <th>الحالة النهائية (قابلة للتعديل)</th>
+                                <th>عذر معتمد؟</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in report_data %}
+                            <tr data-student-id="{{ entry.student.id }}" data-log-id="{{ entry.log_id }}">
+                                <td>{{ loop.index }}</td>
+                                <td>{{ entry.student.full_name }}</td>
+                                <td>{{ entry.entry_time }}</td>
+                                <td>
+                                    {# 🟢 هنا يجب أن تستخدم "EXCUSED" إذا قمنا بتغيير اسم الـ Enum #}
+                                    {% if entry.calculated_status.name == 'PRESENT' %}
+                                        <span class="badge bg-success">{{ entry.calculated_status.value }}</span>
+                                    {% elif entry.calculated_status.name == 'LATE' %}
+                                        <span class="badge bg-warning text-dark">{{ entry.calculated_status.value }}</span>
+                                    {% elif entry.calculated_status.name == 'EXCUSED' %} {# 🟢 تم التعديل هنا #}
+                                        <span class="badge bg-info">{{ entry.calculated_status.value }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ entry.calculated_status.value }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <select class="form-select status-select" 
+                                            data-student-id="{{ entry.student.id }}" 
+                                            data-log-id="{{ entry.log_id }}"
+                                            data-report-date="{{ report_date.strftime('%Y-%m-%d') }}">
+                                        {% for status_enum in final_statuses %}
+                                            <option value="{{ status_enum.name }}"
+                                                    {% if entry.calculated_status.name == status_enum.name %} selected {% endif %}>
+                                                {{ status_enum.value }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    {% if entry.has_approved_excuse %}
+                                        <i class="fas fa-check-circle text-success" title="يوجد عذر معتمد"></i> نعم
+                                    {% else %}
+                                        <i class="fas fa-times-circle text-danger" title="لا يوجد عذر معتمد"></i> لا
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-primary" id="finalizeReportBtn">
+                        <i class="fas fa-paper-plane me-2"></i>تعميم هذا التقرير
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% elif form.is_submitted() and not form.errors %} {# لو الفورم أُرسل ولم تظهر بيانات يعني لا يوجد سجلات #}
+        <div class="alert alert-info mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>لا توجد بيانات حضور للفترة والتاريخ المحددين.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // معالجة تغيير حالة الحضور لطالب واحد (تعديل فردي)
+            document.querySelectorAll('.status-select').forEach(selectElement => {
+                selectElement.addEventListener('change', function() {
+                    const studentId = this.dataset.studentId;
+                    const logId = this.dataset.logId; // قد يكون null إذا لم يكن هناك سجل دخول فعلي
+                    const reportDate = this.dataset.reportDate;
+                    const newStatus = this.value;
+
+                    // يمكنك إضافة تأكيد هنا إذا أردت
+                    if (!confirm('هل أنت متأكد من تغيير حالة هذا الطالب؟')) {
+                        // استعادة القيمة الأصلية إذا ألغى المعلم
+                        // هذا يتطلب تخزين القيمة الأصلية في dataset مثلاً
+                        // For example: this.value = this.dataset.originalStatus;
+                        return;
+                    }
+
+                    fetch('{{ url_for("teacher.update_report_status") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            student_id: studentId,
+                            log_id: logId,
+                            report_date: reportDate,
+                            new_status: newStatus
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            // يمكنك تحديث الـ UI هنا إذا لزم الأمر، أو فقط الاعتماد على حفظ التغيير في DB
+                            // window.location.reload(); // قد لا تحتاج لإعادة تحميل الصفحة لكل تغيير فردي
+                        } else {
+                            alert('حدث خطأ: ' + data.message);
+                            // استعادة القيمة الأصلية في حالة الفشل، إذا تم تخزينها
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('حدث خطأ غير متوقع أثناء تحديث الحالة.');
+                    });
+                });
+            });
+
+            // معالجة زر "تعميم هذا التقرير"
+            document.getElementById('finalizeReportBtn').addEventListener('click', function() {
+                if (!confirm('هل أنت متأكد من تعميم هذا التقرير؟ سيتم حفظ جميع الحالات النهائية وإرسال الإشعارات.')) {
+                    return;
+                }
+
+                // 🟢 هنا التصحيح: يجب التحقق من وجود report_date قبل استخدامه
+                const reportDate = {% if report_date %}'{{ report_date.strftime("%Y-%m-%d") }}'{% else %}null{% endif %};
+
+                if (reportDate === null) {
+                    alert('الرجاء تحديد تاريخ وفترة للتقرير وإنشاءه أولاً قبل محاولة التعميم.');
+                    return;
+                }
+                
+                const reportDataToFinalize = [];
+                document.querySelectorAll('#attendanceReportTable tbody tr').forEach(row => {
+                    const studentId = row.dataset.studentId;
+                    const logId = row.dataset.logId;
+                    const finalStatus = row.querySelector('.status-select').value;
+                    reportDataToFinalize.push({
+                        student_id: studentId,
+                        log_id: logId, // يمكن إرساله كمعلومة إضافية، لكننا قد لا نحتاجه في التعميم
+                        final_status: finalStatus
+                    });
+                });
+
+                fetch('{{ url_for("teacher.finalize_report") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        report_date: reportDate,
+                        report_data: reportDataToFinalize
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.reload(); // إعادة تحميل الصفحة لرؤية التغييرات
+                    } else {
+                        alert('حدث خطأ عند تعميم التقرير: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ غير متوقع أثناء تعميم التقرير.');
+                });
+            });
+        });
+    </script>
+{% endblock %}

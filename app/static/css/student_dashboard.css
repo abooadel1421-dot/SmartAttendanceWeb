@@ -1,0 +1,607 @@
+/* static/css/student_dashboard.css */
+
+:root {
+    --primary-blue: #007bff;
+    --primary-dark-blue: #0056b3;
+    --accent-green: #28a745;
+    --accent-red: #dc3545;
+    --accent-yellow: #ffc107;
+    --accent-info: #17a2b8;
+    --text-dark: #343a40;
+    --text-light: #f8f9fa;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-light: #e9ecef;
+    --shadow-sm: rgba(0, 0, 0, 0.05);
+    --shadow-md: rgba(0, 0, 0, 0.1);
+    --shadow-lg: rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.3s ease-in-out;
+    --border-radius-sm: 0.5rem;
+    --border-radius-md: 0.75rem;
+    --border-radius-lg: 1rem;
+}
+
+/* ============================ */
+/* الصفحة الرئيسية */
+/* ============================ */
+.container.mt-4 {
+    padding-bottom: 2rem;
+}
+
+/* ============================ */
+/* رأس لوحة الطالب */
+/* ============================ */
+.student-dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px var(--shadow-lg);
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.student-dashboard-header .container-fluid {
+    padding: 2rem;
+}
+
+.student-dashboard-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.student-dashboard-header h1 i {
+    font-size: 2.5rem;
+}
+
+.student-dashboard-header p {
+    margin-bottom: 0.5rem;
+}
+
+.student-dashboard-header .lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* ============================ */
+/* صورة الملف الشخصي */
+/* ============================ */
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 1.5rem auto;
+    border: 4px solid var(--bg-white);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: scaleIn 0.5s ease 0.2s both;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ============================ */
+/* البطاقات */
+/* ============================ */
+.card {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 10px 30px var(--shadow-lg);
+    transition: all var(--transition-speed);
+    overflow: hidden;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--shadow-lg);
+}
+
+.card.shadow-sm {
+    box-shadow: 0 8px 20px var(--shadow-md) !important;
+}
+
+.card.border-primary {
+    border-right: 5px solid var(--primary-blue) !important;
+}
+
+.card.border-info {
+    border-right: 5px solid var(--accent-info) !important;
+}
+
+.card.border-success {
+    border-right: 5px solid var(--accent-green) !important;
+}
+
+.card.border-warning {
+    border-right: 5px solid var(--accent-yellow) !important;
+}
+
+/* ============================ */
+/* رؤوس البطاقات */
+/* ============================ */
+.card-header {
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1.25rem 1.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header i {
+    font-size: 1.3rem;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%) !important;
+}
+
+.card-header.bg-info {
+    background: linear-gradient(135deg, var(--accent-info) 0%, #117a8b 100%) !important;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, var(--accent-green) 0%, #1e7e34 100%) !important;
+}
+
+.card-header.bg-warning {
+    background: linear-gradient(135deg, var(--accent-yellow) 0%, #e0a800 100%) !important;
+    color: var(--text-dark) !important;
+}
+
+.card-header.text-white {
+    color: white !important;
+}
+
+/* ============================ */
+/* محتوى البطاقات */
+/* ============================ */
+.card-body {
+    padding: 1.75rem;
+    background-color: var(--bg-white);
+}
+
+.card-body p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.card-body p strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.card-body p:last-child {
+    margin-bottom: 0;
+}
+
+.card-body hr {
+    margin: 1rem 0;
+    border-top: 2px solid var(--border-light);
+}
+
+.card-body h6 {
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-blue);
+    font-size: 1rem;
+}
+
+/* ============================ */
+/* الشارات */
+/* ============================ */
+.badge {
+    font-size: 0.85em;
+    padding: 0.6em 0.9em;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge.bg-success {
+    background-color: var(--accent-green) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--accent-red) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--accent-yellow) !important;
+    color: var(--text-dark) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--accent-info) !important;
+}
+
+.badge.bg-light {
+    background-color: var(--bg-light) !important;
+    color: var(--text-dark) !important;
+    border: 1px solid var(--border-light);
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* ============================ */
+/* الجداول */
+/* ============================ */
+.table-responsive {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead {
+    background-color: #f0f3f7;
+}
+
+.table thead th {
+    background-color: #f0f3f7;
+    color: var(--text-dark);
+    font-weight: 700;
+    border: none;
+    padding: 1rem;
+    vertical-align: middle;
+    text-align: right;
+    font-size: 0.95rem;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.table thead th:first-child {
+    text-align: center;
+}
+
+.table tbody tr {
+    transition: all var(--transition-speed);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.table tbody tr:hover {
+    background-color: #f9fafb;
+    transform: scale(1.002);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    border: none;
+}
+
+.table tbody td:first-child {
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.table code {
+    background-color: var(--bg-light);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    color: var(--primary-blue);
+}
+
+/* ============================ */
+/* رسائل عدم وجود بيانات */
+/* ============================ */
+.no-data-message {
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem 1rem;
+    font-style: italic;
+}
+
+.no-data-message i {
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+}
+
+.alert {
+    border-radius: var(--border-radius-md);
+    border: none;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.alert-light {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+
+/* ============================ */
+/* قائمة الإشعارات */
+/* ============================ */
+.list-group {
+    border: none;
+}
+
+.list-group-item {
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    transition: all var(--transition-speed);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list-group-item:hover {
+    background-color: var(--bg-light);
+    border-color: var(--primary-blue);
+}
+
+.list-group-item span {
+    font-size: 0.9rem;
+}
+
+.list-group-item:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+/* ============================ */
+/* استجابة الجوال */
+/* ============================ */
+@media (max-width: 991.98px) {
+    .container.mt-4 {
+        margin-top: 1.5rem !important;
+    }
+
+    .student-dashboard-header .container-fluid {
+        padding: 1.5rem;
+    }
+
+    .student-dashboard-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .container.mt-4 {
+        margin-top: 1rem !important;
+    }
+
+    .student-dashboard-header {
+        border-radius: var(--border-radius-md);
+        margin-bottom: 1.5rem;
+    }
+
+    .student-dashboard-header .container-fluid {
+        padding: 1.25rem;
+    }
+
+    .student-dashboard-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .student-dashboard-header h1 i {
+        font-size: 2rem;
+    }
+
+    .student-dashboard-header .lead {
+        font-size: 1rem;
+    }
+
+    .profile-image-container {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+    }
+
+    .badge {
+        font-size: 0.8em;
+        padding: 0.5em 0.75em;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-body h6 {
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .card-header {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        gap: 8px;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+
+    .table thead th {
+        padding: 0.6rem 0.5rem;
+    }
+
+    .table tbody td {
+        padding: 0.6rem 0.5rem;
+    }
+
+    .list-group-item {
+        padding: 0.75rem;
+        flex-direction: column;
+        text-align: right;
+        gap: 0.5rem;
+    }
+
+    .list-group-item span {
+        font-size: 0.85rem;
+    }
+
+    .no-data-message {
+        padding: 1.5rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container.mt-4 {
+        margin-top: 0.5rem !important;
+    }
+
+    .student-dashboard-header .container-fluid {
+        padding: 1rem;
+    }
+
+    .student-dashboard-header h1 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-dashboard-header h1 i {
+        font-size: 1.5rem;
+    }
+
+    .student-dashboard-header p {
+        font-size: 0.9rem;
+    }
+
+    .profile-image-container {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 0.75rem;
+    }
+
+    .badge {
+        font-size: 0.75em;
+        padding: 0.4em 0.6em;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-header {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .table-responsive {
+        margin: 0 -0.75rem;
+        border: none;
+    }
+
+    .table thead th {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .table tbody td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .list-group-item {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .no-data-message {
+        padding: 1rem 0.5rem;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,38 @@
+# ملفات ومجلدات خاصة بالبيئة الافتراضية  
+/venv/  
+/.venv/  
+
+# ملفات Python المترجمة  
+__pycache__/  
+*.pyc  
+*.pyd  
+*.pyo  
+
+# ملفات خاصة بـ .env (لا يجب رفعها إلى Git)  
+.env  
+
+# ملفات قواعد البيانات المحلية (إذا كنت تستخدم SQLite مثلاً)  
+# بما أننا نستخدم MySQL، قد لا تحتاج لهذا، ولكن من الجيد وضعها كاحتياط  
+*.db  
+/instance/  
+
+# ملفات Logs  
+*.log  
+
+# ملفات نظام التشغيل (macOS)  
+.DS_Store  
+
+# ملفات أخرى قد تظهر أثناء التطوير  
+/htmlcov/  
+.Python  
+.coverage  
+.mypy_cache/  
+.pytest_cache/  
+.vscode/  
+
+# IDE files (PyCharm, VSCode, etc.)  
+.idea/  
+*.iml  
+
+# Docker volumes  
+.docker/

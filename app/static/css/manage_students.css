@@ -1,0 +1,487 @@
+/* static/css/admin_manage_students.css */  
+
+/* ========================================= */  
+/*  متغيرات CSS مخصصة (Custom CSS Variables) */  
+/* ========================================= */  
+:root {  
+    --primary-blue: #007bff;  
+    --primary-dark-blue: #0056b3;  
+    --accent-green: #28a745;  
+    --accent-red: #dc3545;  
+    --accent-yellow: #ffc107;  
+    --accent-info: #17a2b8;  
+    --text-dark: #343a40; /* أغمق قليلاً لتحسين القراءة */  
+    --text-light: #f8f9fa;  
+    --bg-light: #f8f9fa; /* خلفية فاتحة */  
+    --bg-white: #ffffff;  
+    --border-light: #e9ecef; /* حدود فاتحة وناعمة */  
+    --shadow-sm: rgba(0, 0, 0, 0.05);  
+    --shadow-md: rgba(0, 0, 0, 0.1);  
+    --shadow-lg: rgba(0, 0, 0, 0.15);  
+    --transition-speed: 0.3s ease-in-out;  
+    --border-radius-sm: 0.5rem;  
+    --border-radius-md: 0.75rem;  
+    --border-radius-lg: 1rem;  
+}  
+
+/* ============================ */  
+/*  تحسينات الخطوط والترتيب العام */  
+/* ============================ */  
+body {  
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* خط أكثر حداثة */  
+    color: var(--text-dark);  
+    background-color: var(--bg-light); /* خلفية خفيفة */  
+}  
+
+h1, h2, h3, h4, h5, h6 {  
+    font-family: 'Roboto', 'Segoe UI', sans-serif;  
+    color: var(--text-dark);  
+    font-weight: 700;  
+}  
+
+.container-fluid.py-4 {  
+    padding-top: 2.5rem !important;  
+    padding-bottom: 2.5rem !important;  
+}  
+
+/* ============================ */  
+/*  العنوان الرئيسي */  
+/* ============================ */  
+.display-4.fw-bold {  
+    font-size: 2.8rem;  
+    color: var(--primary-blue);  
+    margin-bottom: 2.5rem;  
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);  
+}  
+
+/* ============================ */  
+/*  رسائل الفلاش (Flash Messages) */  
+/* ============================ */  
+.flash-messages-container {  
+    margin-bottom: 2rem;  
+    max-width: 900px; /* تحديد عرض أقصى */  
+    margin-left: auto;  
+    margin-right: auto;  
+}  
+
+.alert {  
+    border-radius: var(--border-radius-md);  
+    padding: 1rem 1.5rem;  
+    font-weight: 500;  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    box-shadow: 0 4px 15px var(--shadow-sm);  
+    border: none; /* إزالة الحدود الافتراضية */  
+    transition: all var(--transition-speed);  
+}  
+.alert-success { background-color: #d4edda; color: #155724; }  
+.alert-danger { background-color: #f8d7da; color: #721c24; }  
+.alert-warning { background-color: #fff3cd; color: #856404; }  
+.alert-info { background-color: #d1ecf1; color: #0c5460; }  
+
+.alert .btn-close {  
+    margin-right: 0; /* Bootstrap 5 يحتاج هذا لضبط المسافات باللغة العربية */  
+    margin-left: 1rem;  
+    font-size: 0.85rem;  
+    opacity: 0.7;  
+    transition: opacity var(--transition-speed);  
+}  
+.alert .btn-close:hover {  
+    opacity: 1;  
+}  
+.alert-success .btn-close { filter: invert(30%) sepia(10%) saturate(700%) hue-rotate(80deg) brightness(90%) contrast(80%); }  
+.alert-danger .btn-close { filter: invert(30%) sepia(10%) saturate(700%) hue-rotate(340deg) brightness(90%) contrast(80%); }  
+/* يمكنك إضافة المزيد لـ warning و info */  
+
+
+/* ============================ */  
+/*  بطاقة الجدول (Card) */  
+/* ============================ */  
+.card {  
+    border: none;  
+    border-radius: var(--border-radius-lg); /* حواف دائرية أكبر */  
+    box-shadow: 0 15px 40px var(--shadow-lg); /* ظل أكثر وضوحاً وعمقاً */  
+    overflow: hidden; /* لضمان أن الحواف الدائرية للرأس تظهر بشكل صحيح */  
+}  
+
+.card-header {  
+    background: linear-gradient(to right, #007bff, #0056b3); /* تدرج لوني أزرق */  
+    color: var(--text-light);  
+    padding: 1.5rem 2rem; /* مسافات داخلية أكبر */  
+    border-bottom: none;  
+    position: relative; /* لتمكين استخدام pseudo-elements */  
+    z-index: 1;  
+    overflow: hidden;  
+}  
+
+.card-header::before { /* تأثير خلفية خفيف */  
+    content: '';  
+    position: absolute;  
+    top: -50%;  
+    left: -50%;  
+    width: 200%;  
+    height: 200%;  
+    background: rgba(255, 255, 255, 0.08);  
+    transform: rotate(30deg);  
+    z-index: -1;  
+}  
+
+.card-header h6 {  
+    color: var(--text-light);  
+    font-size: 1.25rem;  
+    font-weight: 700;  
+}  
+
+.card-body {  
+    padding: 2rem; /* مسافات داخلية أكبر لجسم البطاقة */  
+    background-color: var(--bg-white);  
+}  
+
+/* ============================ */  
+/*  زر إضافة جديد */  
+/* ============================ */  
+.btn-light.text-primary {  
+    background-color: var(--bg-white);  
+    color: var(--primary-blue) !important;  
+    border: 1px solid var(--primary-blue);  
+    padding: 0.6rem 1.5rem;  
+    font-weight: 600;  
+    border-radius: var(--border-radius-lg); /* حواف دائرية كاملة */  
+    transition: all var(--transition-speed);  
+    box-shadow: 0 3px 10px rgba(0, 123, 255, 0.1);  
+}  
+
+.btn-light.text-primary:hover {  
+    background-color: var(--primary-blue);  
+    color: var(--text-light) !important;  
+    transform: translateY(-3px); /* تأثير رفع لطيف */  
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3); /* ظل أعمق عند التحويم */  
+}  
+
+.btn-light.text-primary i {  
+    margin-left: 0.5rem; /* تعديل المسافة للأيقونة */  
+}  
+
+/* ============================ */  
+/*  الجدول (Table) */  
+/* ============================ */  
+.table-responsive {  
+    border-radius: var(--border-radius-md);  
+    overflow: auto; /* لضمان ظهور شريط التمرير إذا كان الجدول كبيراً */  
+    border: 1px solid var(--border-light); /* حدود ناعمة للمحتوى المجدول */  
+}  
+
+.table {  
+    border-collapse: separate;  
+    border-spacing: 0;  
+    margin-bottom: 0;  
+    min-width: 1000px; /* لتجنب مشاكل العرض على الشاشات الأصغر قليلاً قبل التكييف */  
+}  
+
+.table thead th {  
+    background-color: #e9edf2; /* خلفية رأس الجدول الفاتحة */  
+    color: var(--text-dark);  
+    font-weight: 700;  
+    border-bottom: 2px solid var(--border-light);  
+    padding: 1.2rem 1rem; /* مسافات داخلية أكبر للرؤوس */  
+    vertical-align: middle;  
+    text-align: right; /* محاذاة لليمين لرؤوس الأعمدة */  
+    font-size: 0.95rem;  
+}  
+
+.table tbody tr {  
+    transition: background-color var(--transition-speed), transform var(--transition-speed);  
+}  
+
+.table tbody tr:hover {  
+    background-color: #f1f5f9; /* تظليل أجمل عند التحويم */  
+    transform: translateY(-1px); /* رفع خفيف للصف */  
+    box-shadow: 0 2px 8px var(--shadow-sm);  
+}  
+
+.table tbody td {  
+    padding: 1rem 1rem; /* مسافات داخلية للخلايا */  
+    vertical-align: middle;  
+    border-top: 1px solid var(--border-light);  
+    font-size: 0.9rem;  
+    color: #5a6268; /* لون نص الخلايا أغمق قليلاً */  
+}  
+
+.table tbody tr:last-child td {  
+    border-bottom: none; /* إزالة الحدود السفلية لآخر صف */  
+}  
+
+/* محاذاة خاصة لبعض الأعمدة */  
+.table thead th:last-child,  
+.table tbody td:last-child {  
+    text-align: center; /* الإجراءات في المنتصف */  
+}  
+
+/* ============================ */  
+/*  شارات الحالة (Badges) */  
+/* ============================ */  
+.badge {  
+    padding: 0.6em 1em; /* حجم أكبر للشارة */  
+    border-radius: var(--border-radius-lg); /* حواف دائرية بالكامل */  
+    font-weight: 600;  
+    font-size: 0.8em;  
+    min-width: 70px; /* لتوحيد عرض الشارات */  
+    display: inline-flex;  
+    align-items: center;  
+    justify-content: center;  
+    text-transform: uppercase; /* حروف كبيرة */  
+}  
+
+.badge.bg-success { background-color: var(--accent-green) !important; color: var(--text-light); }  
+.badge.bg-warning { background-color: var(--accent-yellow) !important; color: var(--text-dark); } /* لون نص أغمق للتناسق */  
+.badge.bg-info { background-color: var(--accent-info) !important; color: var(--text-light); }  
+.badge.bg-secondary { background-color: #6c757d !important; color: var(--text-light); }  
+
+/* ============================ */  
+/*  أزرار الإجراءات في الجدول */  
+/* ============================ */  
+.table .btn-sm {  
+    padding: 0.4rem 0.75rem; /* حجم أكبر قليلاً للأزرار */  
+    font-size: 0.8rem;  
+    border-radius: var(--border-radius-sm);  
+    box-shadow: 0 2px 8px var(--shadow-sm); /* ظل خفيف */  
+    transition: all var(--transition-speed);  
+    margin: 0 3px; /* مسافة بين الأزرار */  
+}  
+
+.table .btn-sm:hover {  
+    transform: translateY(-2px); /* رفع أكثر عند التحويم */  
+    box-shadow: 0 5px 15px var(--shadow-md); /* ظل أعمق */  
+    opacity: 0.9;  
+}  
+
+.btn-warning { background-color: #ffc107; border-color: #ffc107; color: var(--text-dark); }  
+.btn-warning:hover { background-color: #e0a800; border-color: #e0a800; color: var(--text-dark); }  
+.btn-danger { background-color: #dc3545; border-color: #dc3545; color: var(--text-light); }  
+.btn-danger:hover { background-color: #c82333; border-color: #c82333; color: var(--text-light); }  
+.btn-info { background-color: #17a2b8; border-color: #17a2b8; color: var(--text-light); }  
+.btn-info:hover { background-color: #138496; border-color: #138496; color: var(--text-light); }  
+.btn-primary { background-color: #007bff; border-color: #007bff; color: var(--text-light); }  
+.btn-primary:hover { background-color: #0069d9; border-color: #0062cc; color: var(--text-light); }  
+
+/* ============================ */  
+/*  Modals (النوافذ المنبثقة) */  
+/* ============================ */  
+.modal-content {  
+    border-radius: var(--border-radius-lg);  
+    box-shadow: 0 20px 60px var(--shadow-lg); /* ظل قوي للمودال */  
+    border: none;  
+    overflow: hidden;  
+}  
+
+.modal-header.bg-danger {  
+    background: linear-gradient(to right, #dc3545, #c82333); /* تدرج أحمر */  
+    color: var(--text-light);  
+    border-top-left-radius: var(--border-radius-lg);  
+    border-top-right-radius: var(--border-radius-lg);  
+    padding: 1.25rem 2rem;  
+    border-bottom: none;  
+}  
+
+.modal-title {  
+    color: var(--text-light);  
+    font-weight: 700;  
+    font-size: 1.3rem;  
+}  
+
+.modal-body {  
+    padding: 2rem;  
+    color: var(--text-dark);  
+}  
+
+.modal-body p.lead {  
+    font-size: 1.1rem;  
+    line-height: 1.6;  
+    margin-bottom: 1rem;  
+}  
+
+.modal-body p.text-danger {  
+    font-size: 0.85rem;  
+    font-weight: 500;  
+    color: #e60000 !important; /* أحمر داكن ومميز للخطر */  
+}  
+
+.modal-footer {  
+    border-top: 1px solid var(--border-light);  
+    padding: 1.5rem 2rem;  
+    background-color: var(--bg-light);  
+}  
+
+/* ============================ */  
+/*  تحسينات DataTables */  
+/* ============================ */  
+.dataTables_wrapper .dataTables_paginate .paginate_button {  
+    padding: 0.6em 1em;  
+    border-radius: var(--border-radius-sm);  
+    margin: 0 3px;  
+    background-color: var(--bg-white);  
+    border: 1px solid var(--border-light);  
+    color: var(--primary-blue) !important;  
+    transition: all var(--transition-speed);  
+}  
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {  
+    background-color: var(--primary-blue);  
+    border-color: var(--primary-blue);  
+    color: var(--text-light) !important;  
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);  
+}  
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,  
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {  
+    background-color: var(--primary-blue);  
+    border-color: var(--primary-blue);  
+    color: var(--text-light) !important;  
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);  
+}  
+
+.dataTables_wrapper .dataTables_filter input,  
+.dataTables_wrapper .dataTables_length select {  
+    border: 1px solid var(--border-light);  
+    border-radius: var(--border-radius-sm);  
+    padding: 0.5rem 0.75rem;  
+    margin: 0 0.5rem;  
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);  
+}  
+
+.dataTables_wrapper .dataTables_filter input:focus,  
+.dataTables_wrapper .dataTables_length select:focus {  
+    border-color: var(--primary-blue);  
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);  
+    outline: none;  
+}  
+
+.dataTables_wrapper .dataTables_info,  
+.dataTables_wrapper .dataTables_length,  
+.dataTables_wrapper .dataTables_filter {  
+    color: var(--text-dark);  
+    font-size: 0.9rem;  
+    margin-bottom: 1rem;  
+}  
+
+/* ============================ */  
+/*  تكييف التنسيقات للشاشات الصغيرة (Responsive Design) */  
+/* ============================ */  
+@media (max-width: 991.98px) {  
+    .card-header {  
+        flex-direction: column;  
+        align-items: flex-start;  
+        padding: 1.5rem;  
+    }  
+    .card-header .btn {  
+        margin-top: 1rem;  
+        width: 100%;  
+        text-align: center;  
+        padding: 0.8rem 1.5rem; /* زر أكبر على الشاشات الصغيرة */  
+    }  
+}  
+
+@media (max-width: 767.98px) {  
+    .container-fluid.py-4 {  
+        padding-top: 1.5rem !important;  
+        padding-bottom: 1.5rem !important;  
+    }  
+    .display-4.fw-bold {  
+        font-size: 2.2rem;  
+        margin-bottom: 1.5rem;  
+    }  
+    .card-body {  
+        padding: 1.5rem;  
+    }  
+    .table-responsive {  
+        border-radius: var(--border-radius-md);  
+        border: none; /* إزالة الحدود الخارجية لـ table-responsive */  
+        /* DataTables ستفقد بعض من تصميمها المدمج في هذا العرض */  
+    }  
+    .table {  
+        min-width: unset; /* إلغاء الحد الأدنى للعرض */  
+        width: 100%;  
+        display: block; /* لجعل الجدول يتصرف ككتلة */  
+    }  
+    .table thead {  
+        display: none; /* إخفاء رأس الجدول على الشاشات الصغيرة */  
+    }  
+    .table tbody, .table tr, .table td {  
+        display: block;  
+        width: 100%;  
+    }  
+    .table tr {  
+        margin-bottom: 1.2rem; /* مسافة أكبر بين الصفوف المتكدسة */  
+        border: 1px solid var(--border-light);  
+        border-radius: var(--border-radius-md);  
+        box-shadow: 0 5px 15px var(--shadow-sm);  
+        background-color: var(--bg-white);  
+        overflow: hidden;  
+    }  
+    .table td {  
+        text-align: right;  
+        padding: 0.8rem 1rem;  
+        position: relative;  
+        border: none;  
+        border-bottom: 1px dashed var(--border-light); /* خط متقطع للتمييز */  
+        font-size: 0.9rem;  
+        padding-right: 45%; /* مساحة لـ data-label */  
+    }  
+    .table td:last-child {  
+        border-bottom: none;  
+        text-align: center;  
+        padding-top: 1rem;  
+        padding-bottom: 1rem;  
+    }  
+    .table td::before {  
+        content: attr(data-label);  
+        position: absolute;  
+        right: 1rem;  
+        width: 40%;  
+        font-weight: 700;  
+        color: var(--primary-blue); /* لون مميز للـ label */  
+        text-align: right;  
+    }  
+
+    /* تحديث labels للخلايا على الشاشات الصغيرة */  
+    .table tbody td:nth-of-type(1):before { content: "الترتيب:"; }  
+    .table tbody td:nth-of-type(2):before { content: "الرقم الأكاديمي:"; }  
+    .table tbody td:nth-of-type(3):before { content: "الاسم:"; }  
+    .table tbody td:nth-of-type(4):before { content: "التخصص:"; }  
+    .table tbody td:nth-of-type(5):before { content: "المستوى:"; }  
+    .table tbody td:nth-of-type(6):before { content: "الحالة:"; }  
+    .table tbody td:nth-of-type(7):before { content: "تاريخ التسجيل:"; }  
+    .table tbody td:nth-of-type(8):before { content: "الإجراءات:"; }  
+
+    /* تعديلات DataTables على الجوال */  
+    .dataTables_wrapper .row:first-child,  
+    .dataTables_wrapper .row:last-child {  
+        display: flex;  
+        flex-direction: column;  
+        align-items: center;  
+        margin: 0;  
+    }  
+    .dataTables_wrapper .dataTables_filter,  
+    .dataTables_wrapper .dataTables_length,  
+    .dataTables_wrapper .dataTables_info,  
+    .dataTables_wrapper .dataTables_paginate {  
+        width: 100%;  
+        text-align: center;  
+        margin-bottom: 1rem;  
+        padding: 0 15px;  
+    }  
+    .dataTables_wrapper .dataTables_filter input {  
+        width: calc(100% - 2rem);  
+    }  
+    .dataTables_wrapper .dataTables_paginate .paginate_button {  
+        margin: 0 2px;  
+        padding: 0.5em 0.8em;  
+    }  
+    .dataTables_wrapper .dataTables_info {  
+        order: 1; /* عرض معلومات الجدول قبل التصفح */  
+    }  
+    .dataTables_wrapper .dataTables_paginate {  
+        order: 2;  
+    }  
+}
