@@ -35,14 +35,20 @@ def combine_date_time_to_saudia_tz(d_obj, t_obj):
 def teacher_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print(f"DEBUG_TEACHER_REQUIRED: Current user authenticated: {current_user.is_authenticated}, Role: {current_user.role.value if current_user.is_authenticated else 'Not Authenticated'}")
         if not current_user.is_authenticated or current_user.role != UserRole.TEACHER:
+            print(f"DEBUG_TEACHER_REQUIRED: User {current_user.username if current_user.is_authenticated else 'Anon'} is NOT a teacher or not authenticated.")
             flash('غير مصرح لك بالوصول إلى هذه الصفحة.', 'danger')
             if current_user.is_authenticated:
                 if current_user.role == UserRole.ADMIN:
+                    print(f"DEBUG_TEACHER_REQUIRED: User is ADMIN, redirecting to admin dashboard.")
                     return redirect(url_for('admin.index'))
                 elif current_user.role == UserRole.STUDENT:
+                    print(f"DEBUG_TEACHER_REQUIRED: User is STUDENT, redirecting to student dashboard.")
                     return redirect(url_for('student.dashboard'))
+            print(f"DEBUG_TEACHER_REQUIRED: Redirecting to main index.")
             return redirect(url_for('main.index'))
+        print(f"DEBUG_TEACHER_REQUIRED: User {current_user.username} is a TEACHER. Proceeding to function.")
         return f(*args, **kwargs)
     return decorated_function
 
