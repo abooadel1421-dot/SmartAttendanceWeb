@@ -19,6 +19,16 @@ import pytz
 from app.models.excuse import Excuse, ExcuseStatus 
 from app.forms.report import GenerateAttendanceReportForm, UpdateAttendanceStatusForm 
 
+import pytz
+from datetime import datetime, timedelta
+# تأكد من استيراد النماذج والمكثفات الضرورية
+from flask import render_template, current_app
+from flask_login import login_required, current_user
+# تأكد من استيراد blueprints والنموذج AttendanceLog و AttendanceStatus
+from app.teacher import teacher_bp
+from app.models import Student, AttendanceLog, AttendanceStatus # تأكد من أن AttendanceStatus مستورد
+from app.utils.helpers import convert_timestamp_to_saudia_tz # تأكد من مسار الدالة
+
 # 🟢 تعريف المنطقة الزمنية للمملكة العربية السعودية
 SAUDIA_TZ = pytz.timezone('Asia/Riyadh')
 
@@ -51,7 +61,6 @@ def convert_timestamp_to_saudia_tz(dt_obj):
             dt_obj = pytz.utc.localize(dt_obj)
         return dt_obj.astimezone(SAUDIA_TZ)
     return dt_obj
-
 
 
 @teacher_bp.route('/dashboard')
@@ -94,6 +103,13 @@ def dashboard():
     for log in recent_logs_raw:
         # هنا نستدعي الدالة المساعدة convert_timestamp_to_saudia_tz
         log.timestamp = convert_timestamp_to_saudia_tz(log.timestamp)
+        
+        # --- أضف هذه الأسطر الجديدة للطباعة ---
+        current_app.logger.debug(f"Log ID: {log.id}, Student ID: {log.student_id}, Timestamp: {log.timestamp}")
+        current_app.logger.debug(f"Status: {log.status}, Status Value: {log.status.value if log.status else 'N/A'}")
+        current_app.logger.debug(f"Location: {log.location if log.location else 'N/A (None or Empty)'}")
+        # ------------------------------------
+        
         recent_logs_processed.append(log)
     
     return render_template('teacher/dashboard.html',
