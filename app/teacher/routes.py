@@ -1,11 +1,11 @@
 # app/teacher/routes.py
-# app/teacher/routes.py
 
 from app.teacher import teacher_bp
-from flask import render_template, redirect, url_for, flash, request, jsonify, current_app # ✅ أضفت current_app هنا بدلاً من تكرار السطر بالكامل
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app.models.user import User, UserRole
 from app.models.student import Student
+# 🟢 عدّل هذا السطر ليحتوي على جميع الاستيرادات المطلوبة من attendance_log
 from app.models.attendance_log import AttendanceLog, AttendanceStatus, FinalAttendanceStatus 
 from app.models.device import Device
 from app.models.notification import Notification
@@ -13,18 +13,14 @@ from app.forms.notification import SendNotificationForm
 
 from app import db
 from functools import wraps
-from datetime import datetime, timedelta, date, time
+from datetime import datetime, timedelta, date, time # 🟢 أضف 'time' هنا
 import pytz
 
 from app.models.excuse import Excuse, ExcuseStatus 
 from app.forms.report import GenerateAttendanceReportForm, UpdateAttendanceStatusForm 
 
-from app.utils.helpers import convert_timestamp_to_saudia_tz # تأكد من مسار الدالة
-
 # 🟢 تعريف المنطقة الزمنية للمملكة العربية السعودية
 SAUDIA_TZ = pytz.timezone('Asia/Riyadh')
-
-# ... بقية الكود كما هو ...
 
 # 🟢 إضافة دالة مساعدة لإنشاء التوقيت المحلي من التاريخ والوقت
 def combine_date_time_to_saudia_tz(d_obj, t_obj):
@@ -35,20 +31,14 @@ def combine_date_time_to_saudia_tz(d_obj, t_obj):
 def teacher_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print(f"DEBUG_TEACHER_REQUIRED: Current user authenticated: {current_user.is_authenticated}, Role: {current_user.role.value if current_user.is_authenticated else 'Not Authenticated'}")
         if not current_user.is_authenticated or current_user.role != UserRole.TEACHER:
-            print(f"DEBUG_TEACHER_REQUIRED: User {current_user.username if current_user.is_authenticated else 'Anon'} is NOT a teacher or not authenticated.")
             flash('غير مصرح لك بالوصول إلى هذه الصفحة.', 'danger')
             if current_user.is_authenticated:
                 if current_user.role == UserRole.ADMIN:
-                    print(f"DEBUG_TEACHER_REQUIRED: User is ADMIN, redirecting to admin dashboard.")
                     return redirect(url_for('admin.index'))
                 elif current_user.role == UserRole.STUDENT:
-                    print(f"DEBUG_TEACHER_REQUIRED: User is STUDENT, redirecting to student dashboard.")
                     return redirect(url_for('student.dashboard'))
-            print(f"DEBUG_TEACHER_REQUIRED: Redirecting to main index.")
             return redirect(url_for('main.index'))
-        print(f"DEBUG_TEACHER_REQUIRED: User {current_user.username} is a TEACHER. Proceeding to function.")
         return f(*args, **kwargs)
     return decorated_function
 
@@ -61,6 +51,7 @@ def convert_timestamp_to_saudia_tz(dt_obj):
             dt_obj = pytz.utc.localize(dt_obj)
         return dt_obj.astimezone(SAUDIA_TZ)
     return dt_obj
+
 
 
 @teacher_bp.route('/dashboard')
@@ -103,13 +94,6 @@ def dashboard():
     for log in recent_logs_raw:
         # هنا نستدعي الدالة المساعدة convert_timestamp_to_saudia_tz
         log.timestamp = convert_timestamp_to_saudia_tz(log.timestamp)
-        
-        # --- أضف هذه الأسطر الجديدة للطباعة ---
-        current_app.logger.debug(f"Log ID: {log.id}, Student ID: {log.student_id}, Timestamp: {log.timestamp}")
-        current_app.logger.debug(f"Status: {log.status}, Status Value: {log.status.value if log.status else 'N/A'}")
-        current_app.logger.debug(f"Location: {log.location if log.location else 'N/A (None or Empty)'}")
-        # ------------------------------------
-        
         recent_logs_processed.append(log)
     
     return render_template('teacher/dashboard.html',
