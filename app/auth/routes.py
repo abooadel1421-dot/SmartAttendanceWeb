@@ -52,20 +52,28 @@ def login(role_param=None):
         if next_page and next_page.startswith('/'):  
             print(f"DEBUG AUTH: Redirecting to 'next_page': {next_page}")  
             return redirect(next_page)  
+# ...
+
         else:  
             if user.role == UserRole.ADMIN:  
                 print("DEBUG AUTH: Post-login redirecting admin to admin.index")  
+                # تأكد أن اسم الـ Blueprint للأدمن هو 'admin'
                 return redirect(url_for('admin.index'))  
             elif user.role == UserRole.TEACHER:  
                 print("DEBUG AUTH: Post-login redirecting teacher to teacher.dashboard")  
+                # ✅ التغيير هنا: استخدم اسم الـ Blueprint 'teacher'
                 return redirect(url_for('teacher.dashboard'))  
             elif user.role == UserRole.STUDENT:  
                 print("DEBUG AUTH: Post-login redirecting student to student.dashboard")  
-                return redirect('/student/dashboard')  # ✅ تغيير هنا
+                # ✅ التغيير هنا: استخدم url_for بدلاً من المسار الثابت
+                # تأكد أن اسم الـ Blueprint للطالب هو 'student'
+                return redirect(url_for('student.dashboard'))  
             else:  
                 print("DEBUG AUTH: Post-login user with unknown role. Redirecting to main.index")  
                 flash('دور المستخدم غير معروف بعد تسجيل الدخول.', 'warning')  
                 return redirect(url_for('main.index'))  
+
+# ...
 
     print("DEBUG AUTH: Rendering login form (GET request).")  
     return render_template('auth/login.html', title='تسجيل الدخول', form=form, requested_role=requested_role)  
