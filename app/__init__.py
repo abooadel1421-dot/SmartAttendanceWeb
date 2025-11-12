@@ -155,7 +155,7 @@ def create_app(config_class=Config):
         app.logger.error(f"ERROR: Failed to register 'admin_bp': {e}")
 
 
-    # Blueprint الخاص بالمعلم (Teacher Blueprint)
+    # Blueprint الخاص بالاعظاء هيئة التدريس (Teacher Blueprint)
     try:
         from app.teacher import teacher_bp
         app.register_blueprint(teacher_bp, url_prefix='/teacher')

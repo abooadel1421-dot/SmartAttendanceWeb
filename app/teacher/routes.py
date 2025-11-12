@@ -27,7 +27,7 @@ def combine_date_time_to_saudia_tz(d_obj, t_obj):
     combined_dt = datetime.combine(d_obj, t_obj)
     return SAUDIA_TZ.localize(combined_dt).astimezone(pytz.utc) # تحويل إلى UTC للحفظ في DB
 
-# Decorator لضمان أن المستخدم هو معلم ومسجل الدخول
+# Decorator لضمان أن المستخدم هو اعظاء هيئة التدريس ومسجل الدخول
 def teacher_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -58,7 +58,7 @@ def convert_timestamp_to_saudia_tz(dt_obj):
 @login_required
 @teacher_required
 def dashboard():
-    """لوحة تحكم المعلم الرئيسية"""
+    """لوحة تحكم الاعظاء هيئة التدريس الرئيسية"""
     
     # 🟢 تحديد بداية ونهاية اليوم بتوقيت الرياض ثم تحويلها إلى UTC للمقارنة مع DB
     now_saudia = datetime.now(SAUDIA_TZ)
@@ -97,7 +97,7 @@ def dashboard():
         recent_logs_processed.append(log)
     
     return render_template('teacher/dashboard.html',
-                          title="لوحة تحكم المعلم",
+                          title="لوحة تحكم الاعظاء هيئة التدريس",
                           total_students=total_students,
                           present_today=present_today_unique, # 🟢 استخدام العدد الفريد
                           absent_today=absent_today,
@@ -333,7 +333,7 @@ def send_notification():
             return render_template('teacher/send_notification.html', title='إرسال إشعار', form=form)
 
         new_notification = Notification(
-            sender_id=current_user.id, # المعلم الحالي هو المرسل
+            sender_id=current_user.id, # الاعظاء هيئة التدريس الحالي هو المرسل
             receiver_id=student_user.id, # حساب المستخدم للطالب هو المستلم
             message=form.message.data,
             status='unread',
@@ -347,7 +347,7 @@ def send_notification():
     return render_template('teacher/send_notification.html', title='إرسال إشعار', form=form)
 
 
-# 🟢 إضافة نقطة نهاية لعرض الإشعارات التي أرسلها المعلم
+# 🟢 إضافة نقطة نهاية لعرض الإشعارات التي أرسلها الاعظاء هيئة التدريس
 @teacher_bp.route('/teacher_notifications')
 @login_required
 @teacher_required
@@ -473,7 +473,7 @@ def review_excuse(excuse_id):
     db.session.commit()
 
     return redirect(url_for('teacher.manage_excuses'))
-# 🟢 دالة لتحديد جميع الإشعارات كمقروءة للمعلم الحالي
+# 🟢 دالة لتحديد جميع الإشعارات كمقروءة للاعظاء هيئة التدريس الحالي
 @teacher_bp.route('/mark_all_notifications_read')
 @login_required
 @teacher_required
@@ -653,7 +653,7 @@ def update_report_status():
         student = Student.query.get(student_id)
         report_date = datetime.strptime(report_date_str, '%Y-%m-%d').date()
 
-        # نبحث عن AttendanceLog قديم تم إنشاؤه لهذا اليوم بواسطة المعلم
+        # نبحث عن AttendanceLog قديم تم إنشاؤه لهذا اليوم بواسطة الاعظاء هيئة التدريس
         # أو ننشئ واحدًا جديدًا إذا لم يكن موجودًا
         existing_log_for_report = AttendanceLog.query.filter(
             AttendanceLog.student_id == student_id,

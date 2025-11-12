@@ -38,10 +38,10 @@
                     {% if current_user.is_authenticated %}  
                         {# روابط المستخدم المسجل دخوله #}  
 
-                        {# روابط المدير #}
+                        {# روابط المشرف #}
                         {% if current_user.is_admin() or current_user.role == UserRole.ADMIN %}  
                             <li class="nav-item">  
-                                <a class="nav-link" href="{{ url_for('admin.index') }}">لوحة تحكم المدير</a>  
+                                <a class="nav-link" href="{{ url_for('admin.index') }}">لوحة تحكم المشرف</a>  
                             </li>  
                             <li class="nav-item">  
                                 <a class="nav-link" href="{{ url_for('admin.manage_students') }}">إدارة الطلاب</a>  
@@ -49,15 +49,15 @@
                             {# يمكنك إضافة روابط إدارية أخرى هنا #}
                         {% endif %}  
 
-                        {# روابط المعلم #}
+                        {# روابط الاعظاء هيئة التدريس #}
                         {% if current_user.is_teacher() %}  
                             <li class="nav-item">  
-                                <a class="nav-link" href="{{ url_for('teacher.dashboard') }}">لوحة تحكم المعلم</a>  
+                                <a class="nav-link" href="{{ url_for('teacher.dashboard') }}">لوحة تحكم الاعظاء هيئة التدريس</a>  
                             </li>  
                             <li class="nav-item">  
                                 <a class="nav-link" href="{{ url_for('teacher.view_students') }}">عرض الطلاب</a>  
                             </li>  
-                            {# 🟢 هنا أضف الروابط الجديدة للمعلم #}
+                            {# 🟢 هنا أضف الروابط الجديدة للاعظاء هيئة التدريس #}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('teacher.generate_report') }}">إنشاء تقرير حضور</a>
                             </li>

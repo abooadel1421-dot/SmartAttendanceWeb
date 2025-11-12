@@ -14,7 +14,7 @@ with app.app_context():
 
     admin_exists = User.query.filter_by(username='admin').first()  
     if admin_exists:  
-        print("حساب المدير موجود بالفعل.")  
+        print("حساب المشرف موجود بالفعل.")  
     else:  
         admin_user = User(  
             username='admin',  
@@ -24,7 +24,7 @@ with app.app_context():
         )  
         db.session.add(admin_user)  
         db.session.commit()  
-        print("تم إنشاء حساب المدير بنجاح: المستخدم 'admin' بكلمة المرور 'AdminSecurePassword123'")  
+        print("تم إنشاء حساب المشرف بنجاح: المستخدم 'admin' بكلمة المرور 'AdminSecurePassword123'")  
 
     print("\nقائمة المستخدمين الحاليين:")  
     users = User.query.all()  

@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart  
 from flask import current_app # لاستخدام إعدادات التطبيق مثل البريد الإلكتروني وكلمة المرور  
 from app.models.student import Student  
-from app.models.user import User # لإرسال إشعارات للمستخدمين (مثلاً المعلمين/الإدارة)  
+from app.models.user import User # لإرسال إشعارات للمستخدمين (مثلاً الاعظاء هيئة التدريسين/الإدارة)  
 
 class NotificationService:  
     """  

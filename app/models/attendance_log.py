@@ -16,7 +16,7 @@ class FinalAttendanceStatus(enum.Enum):
 class AttendanceStatus(enum.Enum):
     ENTER = "دخول"
     EXIT = "خروج"
-    # يمكن أن تحتوي على حالات أخرى مثل LATE_ENTER إذا كان الجهاز يدعمها، لكننا سنعتمد على حساب المعلم.
+    # يمكن أن تحتوي على حالات أخرى مثل LATE_ENTER إذا كان الجهاز يدعمها، لكننا سنعتمد على حساب الاعظاء هيئة التدريس.
 
 
 class AttendanceLog(db.Model):
@@ -28,9 +28,9 @@ class AttendanceLog(db.Model):
     
     card_id = db.Column(db.Integer, db.ForeignKey('card.id', ondelete='SET NULL'), nullable=True)
     
-    final_status = db.Column(db.Enum(FinalAttendanceStatus), nullable=True) # سيتم تعيينها بواسطة المعلم
+    final_status = db.Column(db.Enum(FinalAttendanceStatus), nullable=True) # سيتم تعيينها بواسطة الاعظاء هيئة التدريس
     report_generated_at = db.Column(db.DateTime, nullable=True) # متى تم إنشاء/تحديث التقرير
-    report_generated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True) # المعلم الذي أنشأ التقرير
+    report_generated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True) # الاعظاء هيئة التدريس الذي أنشأ التقرير
 
     # علاقات
     student = db.relationship('Student', back_populates='attendance_records')
