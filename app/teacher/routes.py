@@ -1,11 +1,11 @@
 # app/teacher/routes.py
+# app/teacher/routes.py
 
 from app.teacher import teacher_bp
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request, jsonify, current_app # ✅ أضفت current_app هنا بدلاً من تكرار السطر بالكامل
 from flask_login import login_required, current_user
 from app.models.user import User, UserRole
 from app.models.student import Student
-# 🟢 عدّل هذا السطر ليحتوي على جميع الاستيرادات المطلوبة من attendance_log
 from app.models.attendance_log import AttendanceLog, AttendanceStatus, FinalAttendanceStatus 
 from app.models.device import Device
 from app.models.notification import Notification
@@ -13,24 +13,18 @@ from app.forms.notification import SendNotificationForm
 
 from app import db
 from functools import wraps
-from datetime import datetime, timedelta, date, time # 🟢 أضف 'time' هنا
+from datetime import datetime, timedelta, date, time
 import pytz
 
 from app.models.excuse import Excuse, ExcuseStatus 
 from app.forms.report import GenerateAttendanceReportForm, UpdateAttendanceStatusForm 
 
-import pytz
-from datetime import datetime, timedelta
-# تأكد من استيراد النماذج والمكثفات الضرورية
-from flask import render_template, current_app
-from flask_login import login_required, current_user
-# تأكد من استيراد blueprints والنموذج AttendanceLog و AttendanceStatus
-from app.teacher import teacher_bp
-from app.models import Student, AttendanceLog, AttendanceStatus # تأكد من أن AttendanceStatus مستورد
 from app.utils.helpers import convert_timestamp_to_saudia_tz # تأكد من مسار الدالة
 
 # 🟢 تعريف المنطقة الزمنية للمملكة العربية السعودية
 SAUDIA_TZ = pytz.timezone('Asia/Riyadh')
+
+# ... بقية الكود كما هو ...
 
 # 🟢 إضافة دالة مساعدة لإنشاء التوقيت المحلي من التاريخ والوقت
 def combine_date_time_to_saudia_tz(d_obj, t_obj):
