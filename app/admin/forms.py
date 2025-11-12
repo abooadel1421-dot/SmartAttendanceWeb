@@ -51,7 +51,7 @@ class StudentForm(FlaskForm):
     last_name = StringField('اسم العائلة', validators=[DataRequired(), Length(min=2, max=64)])  
     parent_email = StringField('بريد ولي الأمر الإلكتروني', validators=[Optional(), Email(), Length(max=120)])  
     parent_phone_number = StringField('رقم هاتف ولي الأمر', validators=[Optional(), Length(max=20)])  
-    grade = StringField('الصف/المستوى', validators=[Optional(), Length(max=10)])  
+    grade = StringField('المستوى', validators=[Optional(), Length(max=10)])  
     major = StringField('التخصص', validators=[Optional(), Length(max=64)])  
     date_of_birth = DateField('تاريخ الميلاد', format='%Y-%m-%d', validators=[Optional()])  
     is_active = BooleanField('نشط', default=True)  
