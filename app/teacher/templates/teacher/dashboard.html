@@ -129,16 +129,29 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ log.timestamp.strftime('%Y-%m-%d %I:%M:%S %p') if log.timestamp else '-' }}</td>
-                                    <td> {# 🟢 هنا لعرض "دخول" أو "خروج" فقط #}
-                                        {% if log.status.value == 'ENTER' %}
-                                            <span class="badge bg-success"><i class="fas fa-arrow-right me-1"></i>دخول</span>
-                                        {% elif log.status.value == 'EXIT' %}
-                                            <span class="badge bg-danger"><i class="fas fa-arrow-left me-1"></i>خروج</span>
+                                    <td> {# 🟢 هنا لعرض "دخول" أو "خروج" أو حالات أخرى #}
+                                        {% if log.status %} {# تأكد من وجود قيمة للحالة #}
+                                            {% if log.status.value == 'ENTER' %}
+                                                <span class="badge bg-success"><i class="fas fa-arrow-right me-1"></i>دخول</span>
+                                            {% elif log.status.value == 'EXIT' %}
+                                                <span class="badge bg-danger"><i class="fas fa-arrow-left me-1"></i>خروج</span>
+                                            {% elif log.status.value == 'PRESENT' %} {# حالة الحاضر #}
+                                                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>حاضر</span>
+                                            {% elif log.status.value == 'ABSENT' %} {# حالة الغائب #}
+                                                <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>غائب</span>
+                                            {% elif log.status.value == 'LATE' %} {# حالة المتأخر #}
+                                                <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>متأخر</span>
+                                            {% elif log.status.value == 'EXCUSED' %} {# حالة المعذور #}
+                                                <span class="badge bg-info"><i class="fas fa-file-alt me-1"></i>معذور</span>
+                                            {% else %}
+                                                {# fallback لعرض أي قيمة أخرى للحالة كما هي #}
+                                                <span class="badge bg-secondary">{{ log.status.value }}</span> 
+                                            {% endif %}
                                         {% else %}
                                             <span class="badge bg-secondary">غير محدد</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ log.location if log.location else 'غير معروف' }}</td> {# 🟢 عرض الموقع #}
+                                    <td>{{ log.device.location if log.device else 'غير معروف' }}</td> {# 🟢 عرض الموقع من كائن الجهاز #}
                                 </tr>
                                 {% else %}
                                 <tr>
