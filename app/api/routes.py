@@ -133,11 +133,12 @@ def receive_admin_scan_uid_from_esp():
     current_app.logger.debug(f"DEBUG: Retrieved active_session_id from Redis: {active_session_id}") # سجل جديد
 
     if active_session_id:
-        # تأكد أن active_session_id يتم تحويله لـ string ليتوافق مع المفتاح
-        decoded_active_session_id = active_session_id.decode('utf-8')
+        # بما أن active_session_id هي بالفعل str، لا نحتاج لـ .decode()
+        # فقط قم بتعيينها مباشرة أو استخدمها كما هي.
+        decoded_active_session_id = active_session_id # <--- تم تعديل هذا السطر
         target_redis_key = SCAN_UID_PREFIX + decoded_active_session_id
         
-        current_app.logger.debug(f"DEBUG: Entering admin scan block. Attempting to store UID: {card_uid} with key: {target_redis_key}") # سجل جديد
+        current_app.logger.debug(f"DEBUG: Entering admin scan block. Attempting to store UID: {card_uid} with key: {target_redis_key}")
         
         r.set(target_redis_key, card_uid, ex=10) 
         current_app.logger.info(f"UID {card_uid} stored for admin form session: {decoded_active_session_id}")
