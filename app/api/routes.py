@@ -105,7 +105,6 @@ def cancel_card_scan():
     else:
         current_app.logger.warning(f"Cancel request from {session_id} for non-matching scan {active_session_id}.")
         return jsonify({"success": False, "message": "لا توجد عملية مسح نشطة لهذه الجلسة."}), 404
-
 @api_bp.route('/admin_scan_uid', methods=['POST'])
 def receive_admin_scan_uid_from_esp():
     if not request.is_json:
@@ -121,20 +120,30 @@ def receive_admin_scan_uid_from_esp():
         return jsonify({"message": "Missing 'device_serial_number' in request"}), 400
 
     current_app.logger.info(f"ESP32 received UID: {card_uid} from device: {device_serial_number}.")
+    current_app.logger.debug(f"DEBUG: ESP32 sent UID: {card_uid}, Device: {device_serial_number}") # سجل جديد
 
     # ==============================================================================
     # الخطوة 2: أضف فحص اتصال Redis هنا
     if not check_redis_connection():
+        current_app.logger.error("DEBUG: Redis connection failed in receive_admin_scan_uid_from_esp.") # سجل جديد
         return jsonify({"success": False, "message": "Redis service unavailable"}), 500
     # ==============================================================================
 
     active_session_id = r.get(SCAN_SESSION_PREFIX + "active")
+    current_app.logger.debug(f"DEBUG: Retrieved active_session_id from Redis: {active_session_id}") # سجل جديد
 
     if active_session_id:
-        r.set(SCAN_UID_PREFIX + active_session_id, card_uid, ex=10)
-        current_app.logger.info(f"UID {card_uid} stored for admin form session: {active_session_id}")
+        # تأكد أن active_session_id يتم تحويله لـ string ليتوافق مع المفتاح
+        decoded_active_session_id = active_session_id.decode('utf-8')
+        target_redis_key = SCAN_UID_PREFIX + decoded_active_session_id
+        
+        current_app.logger.debug(f"DEBUG: Entering admin scan block. Attempting to store UID: {card_uid} with key: {target_redis_key}") # سجل جديد
+        
+        r.set(target_redis_key, card_uid, ex=10) 
+        current_app.logger.info(f"UID {card_uid} stored for admin form session: {decoded_active_session_id}")
         return jsonify({"success": True, "message": "UID received and processed for admin form."}), 200
     else:
+        current_app.logger.debug(f"DEBUG: No active admin form scan found. Entering attendance scan block.") # سجل جديد
         current_app.logger.info(f"No active admin form scan. Processing UID {card_uid} for attendance.")
 
         # 1. البحث عن الجهاز
